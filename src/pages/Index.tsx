@@ -6,51 +6,41 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ContactForm } from '@/components/ContactForm';
 import { Heart, Shield, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import doctorHeroImage from '@/assets/doctor-hero.jpg';
-
 const Index = () => {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const [showFullMission, setShowFullMission] = useState(false);
-
-  const services = [
-    {
-      title: "Prévention",
-      description: "Conseils et actions de prévention bucco-dentaire pour tous les âges",
-      icon: Shield,
-      path: "/prevention",
-      color: "from-blue-500 to-blue-600"
-    },
-    {
-      title: "Formation",
-      description: "Formations et sensibilisation à la santé bucco-dentaire",
-      icon: Users,
-      path: "/formation", 
-      color: "from-cyan-500 to-cyan-600"
-    },
-    {
-      title: "Interventions",
-      description: "Interventions en milieu scolaire et professionnel",
-      icon: Heart,
-      path: "/interventions",
-      color: "from-blue-600 to-cyan-500"
-    }
-  ];
-
+  const services = [{
+    title: "Prévention",
+    description: "Conseils et actions de prévention bucco-dentaire pour tous les âges",
+    icon: Shield,
+    path: "/prevention",
+    color: "from-blue-500 to-blue-600"
+  }, {
+    title: "Formation",
+    description: "Formations et sensibilisation à la santé bucco-dentaire",
+    icon: Users,
+    path: "/formation",
+    color: "from-cyan-500 to-cyan-600"
+  }, {
+    title: "Interventions",
+    description: "Interventions en milieu scolaire et professionnel",
+    icon: Heart,
+    path: "/interventions",
+    color: "from-blue-600 to-cyan-500"
+  }];
   const missionText = {
     short: "L'UFSBD œuvre depuis plus de 50 ans pour la promotion de la santé bucco-dentaire.",
     full: "L'UFSBD œuvre depuis plus de 50 ans pour la promotion de la santé bucco-dentaire. Notre section de l'Hérault s'engage quotidiennement dans la prévention, la formation et l'information du public sur l'importance de la santé bucco-dentaire. Nous menons des actions concrètes auprès des écoles, entreprises et institutions pour sensibiliser à l'hygiène bucco-dentaire et promouvoir les bonnes pratiques."
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="glass-effect border-b shadow-soft sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <img 
-              src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" 
-              alt="UFSBD Logo" 
-              className="h-12 w-auto"
-            />
+            <img src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" alt="UFSBD Logo" className="h-12 w-auto" />
           </div>
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild className="hover:text-primary transition-colors">
@@ -59,18 +49,14 @@ const Index = () => {
             <Button variant="ghost" asChild className="hover:text-primary transition-colors">
               <Link to="/contact">Contact</Link>
             </Button>
-            {user ? (
-              <div className="flex items-center space-x-2">
+            {user ? <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">Bonjour {user.email}</span>
                 <Button variant="outline" onClick={signOut} className="hover:bg-primary hover:text-white transition-colors">
                   Déconnexion
                 </Button>
-              </div>
-            ) : (
-              <Button asChild className="btn-primary">
+              </div> : <Button asChild className="btn-primary">
                 <Link to="/auth">Connexion</Link>
-              </Button>
-            )}
+              </Button>}
           </nav>
         </div>
       </header>
@@ -79,11 +65,7 @@ const Index = () => {
       <section className="relative py-20 lg:py-32 hero-gradient overflow-hidden">
         {/* Doctor Background Image */}
         <div className="absolute inset-0">
-          <img 
-            src={doctorHeroImage} 
-            alt="Professional dentist" 
-            className="w-full h-full object-cover object-center"
-          />
+          <img src={doctorHeroImage} alt="Professional dentist" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-600/80 to-cyan-500/70"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
         </div>
@@ -101,14 +83,9 @@ const Index = () => {
               <Button size="lg" asChild className="btn-accent text-lg px-8 py-3 shadow-xl">
                 <Link to="/blog">📰 Nos actualités</Link>
               </Button>
-              <ContactForm 
-                isModal 
-                trigger={
-                  <Button variant="outline" size="lg" className="glass-effect text-black border-white/30 hover:bg-white/20 text-lg px-8 py-3 shadow-xl">
+              <ContactForm isModal trigger={<Button variant="outline" size="lg" className="-bottom-0 text-black text-black hover:text-black text-lg px-8 py-3 shadow-xl">
                     ✉️ Nous contacter
-                  </Button>
-                }
-              />
+                  </Button>} />
             </div>
           </div>
         </div>
@@ -126,14 +103,8 @@ const Index = () => {
           </div>
           <div className="grid gap-8 md:grid-cols-3 max-w-6xl mx-auto">
             {services.map((service, index) => {
-              const IconComponent = service.icon;
-              return (
-                <ContactForm
-                  key={service.title}
-                  isModal
-                  title={`Demande d'information - ${service.title}`}
-                  trigger={
-                    <Card className={`h-full card-hover cursor-pointer shadow-card hover:shadow-card-hover border-0 bg-gradient-to-br ${service.color}`}>
+            const IconComponent = service.icon;
+            return <ContactForm key={service.title} isModal title={`Demande d'information - ${service.title}`} trigger={<Card className={`h-full card-hover cursor-pointer shadow-card hover:shadow-card-hover border-0 bg-gradient-to-br ${service.color}`}>
                       <CardHeader className="text-center pb-4">
                         <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 animate-glow">
                           <IconComponent className="h-8 w-8 text-white" />
@@ -145,11 +116,8 @@ const Index = () => {
                           {service.description}
                         </CardDescription>
                       </CardContent>
-                    </Card>
-                  }
-                />
-              );
-            })}
+                    </Card>} />;
+          })}
           </div>
         </div>
       </section>
@@ -163,16 +131,8 @@ const Index = () => {
               <p className="text-lg text-foreground leading-relaxed">
                 {showFullMission ? missionText.full : missionText.short}
               </p>
-              <Button
-                variant="ghost"
-                onClick={() => setShowFullMission(!showFullMission)}
-                className="mt-4 text-primary hover:text-primary-glow transition-colors"
-              >
-                {showFullMission ? (
-                  <>Voir moins <ChevronUp className="ml-2 h-4 w-4" /></>
-                ) : (
-                  <>En savoir plus <ChevronDown className="ml-2 h-4 w-4" /></>
-                )}
+              <Button variant="ghost" onClick={() => setShowFullMission(!showFullMission)} className="mt-4 text-primary hover:text-primary-glow transition-colors">
+                {showFullMission ? <>Voir moins <ChevronUp className="ml-2 h-4 w-4" /></> : <>En savoir plus <ChevronDown className="ml-2 h-4 w-4" /></>}
               </Button>
             </div>
           </div>
@@ -185,11 +145,7 @@ const Index = () => {
           <div className="grid gap-8 md:grid-cols-3 mb-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <img 
-                  src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" 
-                  alt="UFSBD Logo" 
-                  className="h-16 w-auto"
-                />
+                <img src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" alt="UFSBD Logo" className="h-16 w-auto" />
               </div>
               <p className="text-blue-200 leading-relaxed">
                 Union Française pour la Santé Bucco-Dentaire - Section Hérault
@@ -211,14 +167,9 @@ const Index = () => {
                   </Link>
                 </div>
                 <div>
-                  <ContactForm 
-                    isModal 
-                    trigger={
-                      <button className="text-blue-200 hover:text-yellow-300 transition-colors text-left inline-flex items-center">
+                  <ContactForm isModal trigger={<button className="text-blue-200 hover:text-yellow-300 transition-colors text-left inline-flex items-center">
                         ✉️ Nous contacter
-                      </button>
-                    }
-                  />
+                      </button>} />
                 </div>
               </div>
             </div>
@@ -230,8 +181,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
