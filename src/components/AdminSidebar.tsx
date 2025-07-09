@@ -18,6 +18,7 @@ import {
 
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
+  { title: 'Write Article', url: '/submit', icon: FileText },
   { title: 'Pending Posts', url: '/admin/pending', icon: FileText },
   { title: 'Approved Posts', url: '/admin/approved', icon: CheckCircle },
   { title: 'Users', url: '/admin/users', icon: Users },

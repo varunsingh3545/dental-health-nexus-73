@@ -9,6 +9,7 @@ import doctorHeroImage from '@/assets/doctor-hero.jpg';
 const Index = () => {
   const {
     user,
+    userRole,
     signOut
   } = useAuth();
   const [showFullMission, setShowFullMission] = useState(false);
@@ -51,14 +52,28 @@ const Index = () => {
             <Button variant="ghost" asChild className="hover:text-primary transition-colors">
               <Link to="/contact">Contact</Link>
             </Button>
-            {user ? <div className="flex items-center space-x-2">
+            {user ? (
+              <div className="flex items-center space-x-4">
+                {(userRole === 'admin' || userRole === 'author') && (
+                  <Button variant="ghost" asChild className="hover:text-primary transition-colors">
+                    <Link to="/submit">Écrire un article</Link>
+                  </Button>
+                )}
+                {userRole === 'admin' && (
+                  <Button variant="ghost" asChild className="hover:text-primary transition-colors">
+                    <Link to="/admin">Admin</Link>
+                  </Button>
+                )}
                 <span className="text-sm text-muted-foreground">Bonjour {user.email}</span>
                 <Button variant="outline" onClick={signOut} className="hover:bg-primary hover:text-white transition-colors">
                   Déconnexion
                 </Button>
-              </div> : <Button asChild className="btn-primary">
+              </div>
+            ) : (
+              <Button asChild className="btn-primary">
                 <Link to="/auth">Connexion</Link>
-              </Button>}
+              </Button>
+            )}
           </nav>
         </div>
       </header>
