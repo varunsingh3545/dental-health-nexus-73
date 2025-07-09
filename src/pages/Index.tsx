@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ContactForm } from '@/components/ContactForm';
 import { Heart, Shield, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import doctorHeroImage from '@/assets/doctor-hero.jpg';
 
 const Index = () => {
   const { user, signOut } = useAuth();
@@ -76,24 +77,34 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 hero-gradient overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-transparent"></div>
+        {/* Doctor Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src={doctorHeroImage} 
+            alt="Professional dentist" 
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-600/80 to-cyan-500/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
+        </div>
+        
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
               Union Française pour la<br />
               <span className="text-yellow-300">Santé Bucco-Dentaire</span>
             </h1>
-            <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto">
+            <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto drop-shadow-md">
               Section Hérault - Œuvrer pour une meilleure santé bucco-dentaire pour tous
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
-              <Button size="lg" asChild className="btn-accent text-lg px-8 py-3">
+              <Button size="lg" asChild className="btn-accent text-lg px-8 py-3 shadow-xl">
                 <Link to="/blog">📰 Nos actualités</Link>
               </Button>
               <ContactForm 
                 isModal 
                 trigger={
-                  <Button variant="outline" size="lg" className="glass-effect text-white border-white/30 hover:bg-white/20 text-lg px-8 py-3">
+                  <Button variant="outline" size="lg" className="glass-effect text-white border-white/30 hover:bg-white/20 text-lg px-8 py-3 shadow-xl">
                     ✉️ Nous contacter
                   </Button>
                 }
