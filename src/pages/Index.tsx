@@ -45,10 +45,11 @@ const Index = () => {
       <header className="glass-effect border-b shadow-soft sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary-glow rounded-full flex items-center justify-center">
-              <Heart className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold gradient-text">UFSBD 34</h1>
+            <img 
+              src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" 
+              alt="UFSBD Logo" 
+              className="h-12 w-auto"
+            />
           </div>
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild className="hover:text-primary transition-colors">
@@ -173,10 +174,11 @@ const Index = () => {
           <div className="grid gap-8 md:grid-cols-3 mb-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
-                  <Heart className="h-6 w-6 text-slate-900" />
-                </div>
-                <h3 className="text-2xl font-bold">UFSBD 34</h3>
+                <img 
+                  src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" 
+                  alt="UFSBD Logo" 
+                  className="h-16 w-auto"
+                />
               </div>
               <p className="text-blue-200 leading-relaxed">
                 Union Française pour la Santé Bucco-Dentaire - Section Hérault
