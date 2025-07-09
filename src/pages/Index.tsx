@@ -1,54 +1,71 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ContactForm } from '@/components/ContactForm';
+import { Heart, Shield, Users, ChevronDown, ChevronUp } from 'lucide-react';
 
 const Index = () => {
   const { user, signOut } = useAuth();
+  const [showFullMission, setShowFullMission] = useState(false);
 
   const services = [
     {
       title: "Prévention",
-      description: "Conseils et actions de prévention bucco-dentaire",
-      path: "/prevention"
+      description: "Conseils et actions de prévention bucco-dentaire pour tous les âges",
+      icon: Shield,
+      path: "/prevention",
+      color: "from-blue-500 to-blue-600"
     },
     {
       title: "Formation",
       description: "Formations et sensibilisation à la santé bucco-dentaire",
-      path: "/formation"
+      icon: Users,
+      path: "/formation", 
+      color: "from-cyan-500 to-cyan-600"
     },
     {
       title: "Interventions",
       description: "Interventions en milieu scolaire et professionnel",
-      path: "/interventions"
+      icon: Heart,
+      path: "/interventions",
+      color: "from-blue-600 to-cyan-500"
     }
   ];
+
+  const missionText = {
+    short: "L'UFSBD œuvre depuis plus de 50 ans pour la promotion de la santé bucco-dentaire.",
+    full: "L'UFSBD œuvre depuis plus de 50 ans pour la promotion de la santé bucco-dentaire. Notre section de l'Hérault s'engage quotidiennement dans la prévention, la formation et l'information du public sur l'importance de la santé bucco-dentaire. Nous menons des actions concrètes auprès des écoles, entreprises et institutions pour sensibiliser à l'hygiène bucco-dentaire et promouvoir les bonnes pratiques."
+  };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b">
+      <header className="glass-effect border-b shadow-soft sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-primary">UFSBD 34</h1>
+            <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary-glow rounded-full flex items-center justify-center">
+              <Heart className="h-5 w-5 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold gradient-text">UFSBD 34</h1>
           </div>
           <nav className="flex items-center space-x-4">
-            <Button variant="ghost" asChild>
+            <Button variant="ghost" asChild className="hover:text-primary transition-colors">
               <Link to="/blog">Actualités</Link>
             </Button>
-            <Button variant="ghost" asChild>
+            <Button variant="ghost" asChild className="hover:text-primary transition-colors">
               <Link to="/contact">Contact</Link>
             </Button>
             {user ? (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">Bonjour {user.email}</span>
-                <Button variant="outline" onClick={signOut}>
+                <Button variant="outline" onClick={signOut} className="hover:bg-primary hover:text-white transition-colors">
                   Déconnexion
                 </Button>
               </div>
             ) : (
-              <Button asChild>
+              <Button asChild className="btn-primary">
                 <Link to="/auth">Connexion</Link>
               </Button>
             )}
@@ -57,95 +74,146 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">
-            Union Française pour la Santé Bucco-Dentaire
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Section Hérault - Œuvrer pour une meilleure santé bucco-dentaire pour tous
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button size="lg" asChild>
-              <Link to="/blog">Nos actualités</Link>
-            </Button>
-            <ContactForm 
-              isModal 
-              trigger={<Button variant="outline" size="lg">Nous contacter</Button>}
-            />
+      <section className="relative py-20 lg:py-32 hero-gradient overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-transparent"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">
+              Union Française pour la<br />
+              <span className="text-yellow-300">Santé Bucco-Dentaire</span>
+            </h1>
+            <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto">
+              Section Hérault - Œuvrer pour une meilleure santé bucco-dentaire pour tous
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
+              <Button size="lg" asChild className="btn-accent text-lg px-8 py-3">
+                <Link to="/blog">📰 Nos actualités</Link>
+              </Button>
+              <ContactForm 
+                isModal 
+                trigger={
+                  <Button variant="outline" size="lg" className="glass-effect text-white border-white/30 hover:bg-white/20 text-lg px-8 py-3">
+                    ✉️ Nous contacter
+                  </Button>
+                }
+              />
+            </div>
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent"></div>
       </section>
 
       {/* Services Section */}
-      <section className="py-16 bg-muted/50">
+      <section className="py-20 bg-gradient-to-b from-background to-blue-50/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Nos Services</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {services.map((service) => (
-              <Link key={service.title} to={service.path}>
-                <Card className="h-full transition-all hover:shadow-lg hover:scale-105 cursor-pointer">
-                  <CardHeader>
-                    <CardTitle>{service.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>{service.description}</CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-4xl font-bold gradient-text mb-4">Nos Services</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Découvrez nos actions pour promouvoir la santé bucco-dentaire
+            </p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3 max-w-6xl mx-auto">
+            {services.map((service, index) => {
+              const IconComponent = service.icon;
+              return (
+                <ContactForm
+                  key={service.title}
+                  isModal
+                  title={`Demande d'information - ${service.title}`}
+                  trigger={
+                    <Card className={`h-full card-hover cursor-pointer shadow-card hover:shadow-card-hover border-0 bg-gradient-to-br ${service.color}`}>
+                      <CardHeader className="text-center pb-4">
+                        <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 animate-glow">
+                          <IconComponent className="h-8 w-8 text-white" />
+                        </div>
+                        <CardTitle className="text-2xl text-white">{service.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <CardDescription className="text-blue-100 text-lg">
+                          {service.description}
+                        </CardDescription>
+                      </CardContent>
+                    </Card>
+                  }
+                />
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Mission Section */}
-      <section className="py-16">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-8">Notre Mission</h2>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
-            L'UFSBD œuvre depuis plus de 50 ans pour la promotion de la santé bucco-dentaire. 
-            Notre section de l'Hérault s'engage quotidiennement dans la prévention, 
-            la formation et l'information du public sur l'importance de la santé bucco-dentaire.
-          </p>
+          <div className="max-w-4xl mx-auto animate-fade-in">
+            <h2 className="text-4xl font-bold gradient-text mb-8">Notre Mission</h2>
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-3xl p-8 shadow-large">
+              <p className="text-lg text-foreground leading-relaxed">
+                {showFullMission ? missionText.full : missionText.short}
+              </p>
+              <Button
+                variant="ghost"
+                onClick={() => setShowFullMission(!showFullMission)}
+                className="mt-4 text-primary hover:text-primary-glow transition-colors"
+              >
+                {showFullMission ? (
+                  <>Voir moins <ChevronUp className="ml-2 h-4 w-4" /></>
+                ) : (
+                  <>En savoir plus <ChevronDown className="ml-2 h-4 w-4" /></>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-muted py-12">
+      <footer className="bg-gradient-to-r from-slate-900 to-blue-900 text-white py-16">
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">UFSBD 34</h3>
-              <p className="text-muted-foreground">
+          <div className="grid gap-8 md:grid-cols-3 mb-8">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-slate-900" />
+                </div>
+                <h3 className="text-2xl font-bold">UFSBD 34</h3>
+              </div>
+              <p className="text-blue-200 leading-relaxed">
                 Union Française pour la Santé Bucco-Dentaire - Section Hérault
               </p>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Contact</h3>
-              <p className="text-muted-foreground">
-                Email: ufsbd34@ufsbd.fr
-              </p>
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-yellow-300">Contact</h3>
+              <div className="space-y-2 text-blue-200">
+                <p>📧 Email: ufsbd34@ufsbd.fr</p>
+                <p>📍 Hérault, France</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Liens utiles</h3>
-              <div className="space-y-2">
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-yellow-300">Liens utiles</h3>
+              <div className="space-y-3">
                 <div>
-                  <Link to="/blog" className="text-muted-foreground hover:text-primary">
-                    Actualités
+                  <Link to="/blog" className="text-blue-200 hover:text-yellow-300 transition-colors inline-flex items-center">
+                    📰 Actualités
                   </Link>
                 </div>
                 <div>
                   <ContactForm 
                     isModal 
                     trigger={
-                      <button className="text-muted-foreground hover:text-primary text-left">
-                        Nous contacter
+                      <button className="text-blue-200 hover:text-yellow-300 transition-colors text-left inline-flex items-center">
+                        ✉️ Nous contacter
                       </button>
                     }
                   />
                 </div>
               </div>
             </div>
+          </div>
+          <div className="border-t border-blue-800 pt-8 text-center">
+            <p className="text-blue-300">
+              © 2024 UFSBD Section Hérault. Tous droits réservés.
+            </p>
           </div>
         </div>
       </footer>
