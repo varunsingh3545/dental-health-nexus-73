@@ -104,7 +104,7 @@ const Index = () => {
               <ContactForm 
                 isModal 
                 trigger={
-                  <Button variant="outline" size="lg" className="glass-effect text-white border-white/30 hover:bg-white/20 text-lg px-8 py-3 shadow-xl">
+                  <Button variant="outline" size="lg" className="glass-effect text-black border-white/30 hover:bg-white/20 text-lg px-8 py-3 shadow-xl">
                     ✉️ Nous contacter
                   </Button>
                 }
