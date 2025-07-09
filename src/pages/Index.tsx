@@ -122,6 +122,63 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Who Are We Section */}
+      <section className="py-20 bg-gradient-to-b from-cyan-50/30 to-white">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8 animate-fade-in">
+              <h2 className="text-4xl font-bold gradient-text">Qui sommes-nous ?</h2>
+              <div className="space-y-6 text-muted-foreground">
+                <p className="text-lg leading-relaxed">
+                  L'Union Française pour la Santé Bucco-Dentaire (UFSBD) est une association loi 1901 
+                  créée en 1966, reconnue d'utilité publique depuis 1976. Nous sommes l'organisation 
+                  de référence en matière de prévention bucco-dentaire en France.
+                </p>
+                <p className="text-lg leading-relaxed">
+                  Forte de plus de 50 ans d'expérience, l'UFSBD fédère les professionnels de santé 
+                  bucco-dentaire autour d'une mission commune : améliorer la santé bucco-dentaire 
+                  de tous les Français par la prévention et l'éducation à la santé.
+                </p>
+                <p className="text-lg leading-relaxed">
+                  Nos actions s'adressent à tous les publics, de la petite enfance au grand âge, 
+                  avec une attention particulière portée aux populations les plus vulnérables.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-8 pt-6">
+                <div className="text-center animate-slide-up">
+                  <div className="text-4xl font-bold gradient-text mb-2">50+</div>
+                  <div className="text-sm text-muted-foreground">Années d'expérience</div>
+                </div>
+                <div className="text-center animate-slide-up">
+                  <div className="text-4xl font-bold gradient-text mb-2">1000+</div>
+                  <div className="text-sm text-muted-foreground">Professionnels engagés</div>
+                </div>
+              </div>
+            </div>
+            <div className="relative animate-fade-in">
+              <div className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-blue-500/10 to-cyan-500/10 p-8 shadow-large">
+                <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center">
+                  <div className="text-center space-y-6">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-large animate-glow">
+                      <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                    </div>
+                    <div className="space-y-3">
+                      <h3 className="text-2xl font-bold text-foreground">Notre Vision</h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        Une société où chacun peut bénéficier d'une santé bucco-dentaire optimale, 
+                        grâce à la prévention et à l'éducation
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Mission Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
