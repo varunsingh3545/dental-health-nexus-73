@@ -12,6 +12,8 @@ const Index = () => {
     userRole,
     signOut
   } = useAuth();
+
+  console.log('Current user:', user?.email, 'Role:', userRole);
   const [showFullMission, setShowFullMission] = useState(false);
   const services = [{
     title: "Prévention",
