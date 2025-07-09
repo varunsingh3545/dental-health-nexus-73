@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, CheckCircle, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileText, CheckCircle, Users, LogOut, PenTool, FolderOpen } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,11 +16,17 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-const menuItems = [
-  { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-  { title: 'Write Article', url: '/submit', icon: FileText },
+const writingItems = [
+  { title: 'Write Article', url: '/submit', icon: PenTool },
+];
+
+const managementItems = [
   { title: 'Pending Posts', url: '/admin/pending', icon: FileText },
   { title: 'Approved Posts', url: '/admin/approved', icon: CheckCircle },
+];
+
+const adminItems = [
+  { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Users', url: '/admin/users', icon: Users },
 ];
 
@@ -35,8 +41,8 @@ export function AdminSidebar() {
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'bg-muted text-primary font-medium' : 'hover:bg-muted/50';
 
-  // Filter menu items based on role
-  const filteredMenuItems = menuItems.filter(item => {
+  // Filter items based on role
+  const filteredAdminItems = adminItems.filter(item => {
     if (item.url === '/admin/users' && userRole !== 'admin') {
       return false;
     }
@@ -48,12 +54,50 @@ export function AdminSidebar() {
       <SidebarTrigger className="m-2 self-end" />
       
       <SidebarContent>
+        {/* Admin Section */}
         <SidebarGroup>
-          <SidebarGroupLabel>UFSBD Admin</SidebarGroupLabel>
-          
+          <SidebarGroupLabel>Administration</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {filteredMenuItems.map((item) => (
+              {filteredAdminItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} end className={getNavCls}>
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Writing Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Écriture</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {writingItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} end className={getNavCls}>
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Blog Management Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Gestion des Articles</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {managementItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
