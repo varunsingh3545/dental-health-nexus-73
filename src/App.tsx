@@ -16,6 +16,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import PendingPosts from "./pages/admin/PendingPosts";
 import ApprovedPosts from "./pages/admin/ApprovedPosts";
 import Users from "./pages/admin/Users";
+import Gallery from "./pages/admin/Gallery";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="pending" element={<PendingPosts />} />
               <Route path="approved" element={<ApprovedPosts />} />
               <Route path="users" element={<Users />} />
+              <Route path="gallery" element={<Gallery />} />
             </Route>
             {/* Service pages placeholders */}
             <Route path="/prevention" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl font-bold">Prévention - Page en construction</h1></div>} />

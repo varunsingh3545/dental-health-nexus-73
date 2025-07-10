@@ -23,6 +23,7 @@ const writingItems = [
 const managementItems = [
   { title: 'Pending Posts', url: '/admin/pending', icon: FileText },
   { title: 'Approved Posts', url: '/admin/approved', icon: CheckCircle },
+  { title: 'Gallery Management', url: '/admin/gallery', icon: FolderOpen },
 ];
 
 const adminItems = [

@@ -12,8 +12,6 @@ const Index = () => {
     userRole,
     signOut
   } = useAuth();
-
-  console.log('Current user:', user?.email, 'Role:', userRole);
   const [showFullMission, setShowFullMission] = useState(false);
   const services = [{
     title: "Prévention",
@@ -123,15 +121,15 @@ const Index = () => {
           <div className="grid gap-8 md:grid-cols-3 max-w-6xl mx-auto">
             {services.map((service, index) => {
             const IconComponent = service.icon;
-            return <ContactForm key={service.title} isModal title={`Demande d'information - ${service.title}`} trigger={<Card className={`h-full card-hover cursor-pointer shadow-card hover:shadow-card-hover border-0 bg-gradient-to-br ${service.color}`}>
+            return <ContactForm key={service.title} isModal title={`Demande d'information - ${service.title}`} trigger={<Card className={`h-full card-hover cursor-pointer shadow-lg hover:shadow-xl border border-white/20 bg-gradient-to-br ${service.color} transition-all duration-300`}>
                       <CardHeader className="text-center pb-4">
                         <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 animate-glow">
                           <IconComponent className="h-8 w-8 text-white" />
                         </div>
-                        <CardTitle className="text-2xl text-white">{service.title}</CardTitle>
+                        <CardTitle className="text-2xl text-white drop-shadow-md">{service.title}</CardTitle>
                       </CardHeader>
                       <CardContent className="text-center">
-                        <CardDescription className="text-blue-100 text-lg">
+                        <CardDescription className="text-blue-100 text-lg drop-shadow-sm">
                           {service.description}
                         </CardDescription>
                       </CardContent>
@@ -207,7 +205,7 @@ const Index = () => {
               <p className="text-lg text-foreground leading-relaxed">
                 {showFullMission ? missionText.full : missionText.short}
               </p>
-              <Button variant="ghost" onClick={() => setShowFullMission(!showFullMission)} className="mt-4 text-primary hover:text-primary-glow transition-colors">
+              <Button variant="ghost" onClick={() => setShowFullMission(!showFullMission)} className="mt-4 text-primary hover:text-primary/80 transition-colors">
                 {showFullMission ? <>Voir moins <ChevronUp className="ml-2 h-4 w-4" /></> : <>En savoir plus <ChevronDown className="ml-2 h-4 w-4" /></>}
               </Button>
             </div>
