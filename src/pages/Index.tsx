@@ -38,16 +38,19 @@ const Index = () => {
   };
   return <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="glass-effect border-b shadow-soft sticky top-0 z-50">
+      <header className="bg-white/95 backdrop-blur-sm border-b shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <a href="https://www.ufsbd.fr" target="_blank" rel="noopener noreferrer">
-              <img src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" alt="UFSBD Logo" className="h-12 w-auto hover:scale-105 transition-transform cursor-pointer" />
+              <img src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" alt="UFSBD Logo" className="h-16 w-auto hover:scale-105 transition-transform cursor-pointer" />
             </a>
           </div>
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild className="hover:text-primary transition-colors">
               <Link to="/blog">Actualités</Link>
+            </Button>
+            <Button variant="ghost" asChild className="hover:text-primary transition-colors">
+              <Link to="/organigramme">Organisation</Link>
             </Button>
             <Button variant="ghost" asChild className="hover:text-primary transition-colors">
               <Link to="/contact">Contact</Link>
@@ -220,7 +223,7 @@ const Index = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <a href="https://www.ufsbd.fr" target="_blank" rel="noopener noreferrer">
-                  <img src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" alt="UFSBD Logo" className="h-16 w-auto hover:scale-105 transition-transform cursor-pointer" />
+                  <img src="/lovable-uploads/ab742599-8097-48dc-a1b3-6d031d2f9718.png" alt="UFSBD Logo" className="h-20 w-auto hover:scale-105 transition-transform cursor-pointer" />
                 </a>
               </div>
               <p className="text-blue-200 leading-relaxed">

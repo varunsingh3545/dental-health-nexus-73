@@ -11,6 +11,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import BlogSubmit from "./pages/BlogSubmit";
 import Contact from "./pages/Contact";
+import Organigramme from "./pages/Organigramme";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import PendingPosts from "./pages/admin/PendingPosts";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/organigramme" element={<Organigramme />} />
             <Route 
               path="/submit" 
               element={
