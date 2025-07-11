@@ -5,95 +5,146 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, Save, Users } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Trash2, Save, Users, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface OrgMember {
   id: string;
   name: string;
   title: string;
-  imageUrl?: string;
+  image_url?: string;
   type: 'president' | 'vicePresident' | 'secretaire' | 'tresorier' | 'commission';
   description?: string;
   members?: string[];
+  color?: string;
 }
 
 export default function OrganigrammeAdmin() {
   const { toast } = useToast();
-  const [orgData, setOrgData] = useState<OrgMember[]>([
-    {
-      id: '1',
-      name: 'Dr. Jean Dupont',
-      title: 'Président',
-      type: 'president',
-      imageUrl: ''
-    },
-    {
-      id: '2',
-      name: 'Dr. Marie Martin',
-      title: 'Vice-Présidente',
-      type: 'vicePresident',
-      imageUrl: ''
-    },
-    {
-      id: '3',
-      name: 'Pierre Durand',
-      title: 'Secrétaire Général',
-      type: 'secretaire',
-      imageUrl: ''
-    },
-    {
-      id: '4',
-      name: 'Sophie Bernard',
-      title: 'Trésorière',
-      type: 'tresorier',
-      imageUrl: ''
-    },
-    {
-      id: '5',
-      name: 'Commission Prévention',
-      title: 'Commission Prévention',
-      type: 'commission',
-      description: 'Actions de prévention et sensibilisation',
-      members: ['Dr. Alice Moreau', 'Dr. Paul Lefebvre', 'Claire Rousseau']
-    },
-    {
-      id: '6',
-      name: 'Commission Formation',
-      title: 'Commission Formation',
-      type: 'commission',
-      description: 'Programmes de formation professionnelle',
-      members: ['Dr. Michel Blanc', 'Dr. Anne Petit', 'Laurent Simon']
-    }
-  ]);
-
+  const [orgData, setOrgData] = useState<OrgMember[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newMember, setNewMember] = useState<Partial<OrgMember>>({
     name: '',
     title: '',
     type: 'commission',
-    imageUrl: '',
+    image_url: '',
     description: '',
-    members: []
+    members: [],
+    color: 'from-blue-500 to-blue-600'
   });
   const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    fetchOrgData();
+  }, []);
+
+  const fetchOrgData = async () => {
+    try {
+      // Get data from localStorage or initialize with default data
+      const storedData = localStorage.getItem('organigramme_data');
+      if (storedData) {
+        setOrgData(JSON.parse(storedData));
+      } else {
+        // Initialize with default data
+        const defaultData: OrgMember[] = [
+          {
+            id: '1',
+            name: 'Dr. Jean Dupont',
+            title: 'Président',
+            type: 'president',
+            image_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
+            color: 'from-blue-600 to-blue-700'
+          },
+          {
+            id: '2',
+            name: 'Dr. Marie Martin',
+            title: 'Vice-Présidente',
+            type: 'vicePresident',
+            image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
+            color: 'from-cyan-500 to-cyan-600'
+          },
+          {
+            id: '3',
+            name: 'Pierre Durand',
+            title: 'Secrétaire Général',
+            type: 'secretaire',
+            image_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face',
+            color: 'from-blue-500 to-blue-600'
+          },
+          {
+            id: '4',
+            name: 'Sophie Bernard',
+            title: 'Trésorière',
+            type: 'tresorier',
+            image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+            color: 'from-teal-500 to-teal-600'
+          },
+          {
+            id: '5',
+            name: 'Commission Prévention',
+            title: 'Commission Prévention',
+            type: 'commission',
+            image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop&crop=center',
+            description: 'Actions de prévention et sensibilisation',
+            members: ['Dr. Alice Moreau', 'Dr. Paul Lefebvre', 'Claire Rousseau'],
+            color: 'from-green-500 to-green-600'
+          },
+          {
+            id: '6',
+            name: 'Commission Formation',
+            title: 'Commission Formation',
+            type: 'commission',
+            image_url: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=150&h=150&fit=crop&crop=center',
+            description: 'Programmes de formation professionnelle',
+            members: ['Dr. Michel Blanc', 'Dr. Anne Petit', 'Laurent Simon'],
+            color: 'from-purple-500 to-purple-600'
+          }
+        ];
+        setOrgData(defaultData);
+        localStorage.setItem('organigramme_data', JSON.stringify(defaultData));
+      }
+    } catch (error) {
+      console.error('Error fetching org data:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les données de l'organigramme.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEdit = (member: OrgMember) => {
     setEditingId(member.id);
   };
 
-  const handleSave = (id: string, updatedData: Partial<OrgMember>) => {
-    setOrgData(prev => prev.map(item => 
-      item.id === id ? { ...item, ...updatedData } : item
-    ));
-    setEditingId(null);
-    toast({
-      title: "Membre mis à jour",
-      description: "Les informations ont été sauvegardées avec succès."
-    });
+  const handleSave = async (id: string, updatedData: Partial<OrgMember>) => {
+    try {
+      const updatedOrgData = orgData.map(item => 
+        item.id === id ? { ...item, ...updatedData } : item
+      );
+      setOrgData(updatedOrgData);
+      localStorage.setItem('organigramme_data', JSON.stringify(updatedOrgData));
+      
+      setEditingId(null);
+      toast({
+        title: "Membre mis à jour",
+        description: "Les informations ont été sauvegardées avec succès."
+      });
+    } catch (error) {
+      console.error('Error updating member:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder les modifications.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const member = orgData.find(m => m.id === id);
     if (member && ['president', 'vicePresident', 'secretaire', 'tresorier'].includes(member.type)) {
       toast({
@@ -104,14 +155,26 @@ export default function OrganigrammeAdmin() {
       return;
     }
     
-    setOrgData(prev => prev.filter(item => item.id !== id));
-    toast({
-      title: "Membre supprimé",
-      description: "Le membre a été retiré de l'organigramme."
-    });
+    try {
+      const updatedOrgData = orgData.filter(item => item.id !== id);
+      setOrgData(updatedOrgData);
+      localStorage.setItem('organigramme_data', JSON.stringify(updatedOrgData));
+      
+      toast({
+        title: "Membre supprimé",
+        description: "Le membre a été retiré de l'organigramme."
+      });
+    } catch (error) {
+      console.error('Error deleting member:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le membre.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleAddMember = () => {
+  const handleAddMember = async () => {
     if (!newMember.name || !newMember.title) {
       toast({
         title: "Erreur",
@@ -121,21 +184,35 @@ export default function OrganigrammeAdmin() {
       return;
     }
 
-    const id = Date.now().toString();
-    setOrgData(prev => [...prev, { ...newMember, id } as OrgMember]);
-    setNewMember({
-      name: '',
-      title: '',
-      type: 'commission',
-      imageUrl: '',
-      description: '',
-      members: []
-    });
-    setShowAddForm(false);
-    toast({
-      title: "Membre ajouté",
-      description: "Le nouveau membre a été ajouté à l'organigramme."
-    });
+    try {
+      const id = Date.now().toString();
+      const memberWithId = { ...newMember, id } as OrgMember;
+      const updatedOrgData = [...orgData, memberWithId];
+      setOrgData(updatedOrgData);
+      localStorage.setItem('organigramme_data', JSON.stringify(updatedOrgData));
+      
+      setNewMember({
+        name: '',
+        title: '',
+        type: 'commission',
+        image_url: '',
+        description: '',
+        members: [],
+        color: 'from-blue-500 to-blue-600'
+      });
+      setShowAddForm(false);
+      toast({
+        title: "Membre ajouté",
+        description: "Le nouveau membre a été ajouté à l'organigramme."
+      });
+    } catch (error) {
+      console.error('Error adding member:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter le membre.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getTypeLabel = (type: string) => {
@@ -181,15 +258,37 @@ export default function OrganigrammeAdmin() {
             </div>
           </div>
           
-          <div>
-            <Label htmlFor="imageUrl">URL de l'image</Label>
-            <Input
-              id="imageUrl"
-              placeholder="https://example.com/image.jpg"
-              value={formData.imageUrl || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-            />
-          </div>
+            <div>
+              <Label htmlFor="imageUrl">URL de l'image</Label>
+              <Input
+                id="imageUrl"
+                placeholder="https://example.com/image.jpg"
+                value={formData.image_url || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="color">Couleur du dégradé</Label>
+              <Select
+                value={formData.color || 'from-blue-500 to-blue-600'}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, color: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="from-blue-600 to-blue-700">Bleu foncé</SelectItem>
+                  <SelectItem value="from-cyan-500 to-cyan-600">Cyan</SelectItem>
+                  <SelectItem value="from-blue-500 to-blue-600">Bleu</SelectItem>
+                  <SelectItem value="from-teal-500 to-teal-600">Teal</SelectItem>
+                  <SelectItem value="from-green-500 to-green-600">Vert</SelectItem>
+                  <SelectItem value="from-purple-500 to-purple-600">Violet</SelectItem>
+                  <SelectItem value="from-red-500 to-red-600">Rouge</SelectItem>
+                  <SelectItem value="from-orange-500 to-orange-600">Orange</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
           {member.type === 'commission' && (
             <>
@@ -237,6 +336,14 @@ export default function OrganigrammeAdmin() {
       </Card>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -287,9 +394,28 @@ export default function OrganigrammeAdmin() {
               <Input
                 id="newImageUrl"
                 placeholder="https://example.com/image.jpg"
-                value={newMember.imageUrl}
-                onChange={(e) => setNewMember(prev => ({ ...prev, imageUrl: e.target.value }))}
+                value={newMember.image_url}
+                onChange={(e) => setNewMember(prev => ({ ...prev, image_url: e.target.value }))}
               />
+            </div>
+
+            <div>
+              <Label htmlFor="newType">Type</Label>
+              <Select
+                value={newMember.type}
+                onValueChange={(value) => setNewMember(prev => ({ ...prev, type: value as any }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="commission">Commission</SelectItem>
+                  <SelectItem value="president">Président</SelectItem>
+                  <SelectItem value="vicePresident">Vice-Président</SelectItem>
+                  <SelectItem value="secretaire">Secrétaire</SelectItem>
+                  <SelectItem value="tresorier">Trésorier</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -341,8 +467,8 @@ export default function OrganigrammeAdmin() {
                           <p className="text-sm text-gray-600">{member.members.join(', ')}</p>
                         </div>
                       )}
-                      {member.imageUrl && (
-                        <p className="text-xs text-blue-600">📷 Image: {member.imageUrl}</p>
+                      {member.image_url && (
+                        <p className="text-xs text-blue-600">📷 Image: {member.image_url}</p>
                       )}
                     </div>
                     <div className="flex gap-2 ml-4">

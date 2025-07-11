@@ -1,73 +1,135 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, UserCheck, Award, Building2, Heart, BookOpen, Shield } from 'lucide-react';
 
+interface OrgMemberData {
+  id: string;
+  name: string;
+  title: string;
+  type: string;
+  image_url?: string;
+  description?: string;
+  members?: string[];
+  color?: string;
+}
+
 export default function Organigramme() {
-  const organizationData = {
-    president: {
-      title: "Président",
-      name: "Dr. [Nom]",
-      icon: Award,
-      color: "from-blue-600 to-blue-700",
-      imageUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face"
-    },
-    vicePresident: {
-      title: "Vice-Président",
-      name: "Dr. [Nom]",
-      icon: UserCheck,
-      color: "from-cyan-500 to-cyan-600",
-      imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face"
-    },
-    secretaire: {
-      title: "Secrétaire Général",
-      name: "[Nom]",
-      icon: Users,
-      color: "from-blue-500 to-blue-600",
-      imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face"
-    },
-    tresorier: {
-      title: "Trésorier",
-      name: "[Nom]",
-      icon: Building2,
-      color: "from-teal-500 to-teal-600",
-      imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-    },
-    commissions: [
-      {
-        title: "Commission Prévention",
-        description: "Actions de prévention et sensibilisation",
-        icon: Shield,
-        members: ["Dr. [Nom]", "[Nom]", "[Nom]"],
-        color: "from-green-500 to-green-600",
-        imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop&crop=center"
-      },
-      {
-        title: "Commission Formation",
-        description: "Programmes de formation professionnelle",
-        icon: BookOpen,
-        members: ["Dr. [Nom]", "[Nom]", "[Nom]"],
-        color: "from-purple-500 to-purple-600",
-        imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=150&h=150&fit=crop&crop=center"
-      },
-      {
-        title: "Commission Santé Publique",
-        description: "Politiques de santé bucco-dentaire",
-        icon: Heart,
-        members: ["Dr. [Nom]", "[Nom]", "[Nom]"],
-        color: "from-red-500 to-red-600",
-        imageUrl: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=center"
+  const [orgData, setOrgData] = useState<OrgMemberData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchOrgData();
+  }, []);
+
+  const fetchOrgData = async () => {
+    try {
+      // Get data from localStorage or use default data
+      const storedData = localStorage.getItem('organigramme_data');
+      if (storedData) {
+        setOrgData(JSON.parse(storedData));
+      } else {
+        // Default data if none exists
+        const defaultData: OrgMemberData[] = [
+          {
+            id: '1',
+            name: 'Dr. Jean Dupont',
+            title: 'Président',
+            type: 'president',
+            image_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
+            color: 'from-blue-600 to-blue-700'
+          },
+          {
+            id: '2',
+            name: 'Dr. Marie Martin',
+            title: 'Vice-Présidente',
+            type: 'vicePresident',
+            image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
+            color: 'from-cyan-500 to-cyan-600'
+          },
+          {
+            id: '3',
+            name: 'Pierre Durand',
+            title: 'Secrétaire Général',
+            type: 'secretaire',
+            image_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face',
+            color: 'from-blue-500 to-blue-600'
+          },
+          {
+            id: '4',
+            name: 'Sophie Bernard',
+            title: 'Trésorière',
+            type: 'tresorier',
+            image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+            color: 'from-teal-500 to-teal-600'
+          },
+          {
+            id: '5',
+            name: 'Commission Prévention',
+            title: 'Commission Prévention',
+            type: 'commission',
+            image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop&crop=center',
+            description: 'Actions de prévention et sensibilisation',
+            members: ['Dr. Alice Moreau', 'Dr. Paul Lefebvre', 'Claire Rousseau'],
+            color: 'from-green-500 to-green-600'
+          },
+          {
+            id: '6',
+            name: 'Commission Formation',
+            title: 'Commission Formation',
+            type: 'commission',
+            image_url: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=150&h=150&fit=crop&crop=center',
+            description: 'Programmes de formation professionnelle',
+            members: ['Dr. Michel Blanc', 'Dr. Anne Petit', 'Laurent Simon'],
+            color: 'from-purple-500 to-purple-600'
+          },
+          {
+            id: '7',
+            name: 'Commission Santé Publique',
+            title: 'Commission Santé Publique',
+            type: 'commission',
+            image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=center',
+            description: 'Politiques de santé bucco-dentaire',
+            members: ['Dr. Emma Roussel', 'Dr. Thomas Moreau', 'Julie Bertrand'],
+            color: 'from-red-500 to-red-600'
+          }
+        ];
+        setOrgData(defaultData);
+        localStorage.setItem('organigramme_data', JSON.stringify(defaultData));
       }
-    ]
+    } catch (error) {
+      console.error('Error fetching org data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const OrgCard = ({ person, className = "" }: { person: any, className?: string }) => {
-    const IconComponent = person.icon;
+  // Group data by type
+  const president = orgData.find(member => member.type === 'president');
+  const vicePresident = orgData.find(member => member.type === 'vicePresident');
+  const secretaire = orgData.find(member => member.type === 'secretaire');
+  const tresorier = orgData.find(member => member.type === 'tresorier');
+  const commissions = orgData.filter(member => member.type === 'commission');
+
+  const getIcon = (type: string) => {
+    const iconMap = {
+      president: Award,
+      vicePresident: UserCheck,
+      secretaire: Users,
+      tresorier: Building2,
+      commission: Heart
+    };
+    return iconMap[type as keyof typeof iconMap] || Users;
+  };
+
+  const OrgCard = ({ person, className = "" }: { person: OrgMemberData, className?: string }) => {
+    const IconComponent = getIcon(person.type);
     return (
-      <Card className={`transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${person.color} text-white ${className}`}>
+      <Card className={`transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${person.color || 'from-blue-500 to-blue-600'} text-white ${className}`}>
         <CardHeader className="text-center pb-4">
           <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 overflow-hidden">
-            {person.imageUrl ? (
+            {person.image_url ? (
               <img 
-                src={person.imageUrl} 
+                src={person.image_url} 
                 alt={person.name}
                 className="w-full h-full object-cover rounded-2xl"
                 onError={(e) => {
@@ -76,7 +138,7 @@ export default function Organigramme() {
                 }}
               />
             ) : null}
-            <IconComponent className={`h-8 w-8 text-white ${person.imageUrl ? 'hidden' : ''}`} />
+            <IconComponent className={`h-8 w-8 text-white ${person.image_url ? 'hidden' : ''}`} />
           </div>
           <CardTitle className="text-xl text-white drop-shadow-md">{person.title}</CardTitle>
         </CardHeader>
@@ -87,15 +149,15 @@ export default function Organigramme() {
     );
   };
 
-  const CommissionCard = ({ commission }: { commission: any }) => {
-    const IconComponent = commission.icon;
+  const CommissionCard = ({ commission }: { commission: OrgMemberData }) => {
+    const IconComponent = getIcon(commission.type);
     return (
-      <Card className={`h-full transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${commission.color} text-white`}>
+      <Card className={`h-full transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${commission.color || 'from-blue-500 to-blue-600'} text-white`}>
         <CardHeader>
           <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 overflow-hidden">
-            {commission.imageUrl ? (
+            {commission.image_url ? (
               <img 
-                src={commission.imageUrl} 
+                src={commission.image_url} 
                 alt={commission.title}
                 className="w-full h-full object-cover rounded-xl"
                 onError={(e) => {
@@ -104,24 +166,37 @@ export default function Organigramme() {
                 }}
               />
             ) : null}
-            <IconComponent className={`h-6 w-6 text-white ${commission.imageUrl ? 'hidden' : ''}`} />
+            <IconComponent className={`h-6 w-6 text-white ${commission.image_url ? 'hidden' : ''}`} />
           </div>
           <CardTitle className="text-lg text-white drop-shadow-md">{commission.title}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-white/90 text-sm">{commission.description}</p>
-          <div className="space-y-2">
-            <h4 className="text-white font-medium text-sm">Membres:</h4>
-            <ul className="space-y-1">
-              {commission.members.map((member: string, index: number) => (
-                <li key={index} className="text-white/80 text-xs">• {member}</li>
-              ))}
-            </ul>
-          </div>
+          {commission.description && <p className="text-white/90 text-sm">{commission.description}</p>}
+          {commission.members && commission.members.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-white font-medium text-sm">Membres:</h4>
+              <ul className="space-y-1">
+                {commission.members.map((member: string, index: number) => (
+                  <li key={index} className="text-white/80 text-xs">• {member}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>Chargement de l'organigramme...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-white">
@@ -141,20 +216,24 @@ export default function Organigramme() {
           <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Bureau Exécutif</h2>
           
           {/* Président */}
-          <div className="flex justify-center mb-8">
-            <OrgCard person={organizationData.president} className="w-80" />
-          </div>
-          
-          {/* Ligne de direction */}
-          <div className="flex justify-center mb-4">
-            <div className="w-px h-8 bg-gray-300"></div>
-          </div>
+          {president && (
+            <>
+              <div className="flex justify-center mb-8">
+                <OrgCard person={president} className="w-80" />
+              </div>
+              
+              {/* Ligne de direction */}
+              <div className="flex justify-center mb-4">
+                <div className="w-px h-8 bg-gray-300"></div>
+              </div>
+            </>
+          )}
           
           {/* Vice-Président, Secrétaire, Trésorier */}
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <OrgCard person={organizationData.vicePresident} />
-            <OrgCard person={organizationData.secretaire} />
-            <OrgCard person={organizationData.tresorier} />
+            {vicePresident && <OrgCard person={vicePresident} />}
+            {secretaire && <OrgCard person={secretaire} />}
+            {tresorier && <OrgCard person={tresorier} />}
           </div>
         </div>
 
@@ -191,14 +270,16 @@ export default function Organigramme() {
         </div>
 
         {/* Commissions */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Commissions Spécialisées</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {organizationData.commissions.map((commission, index) => (
-              <CommissionCard key={index} commission={commission} />
-            ))}
+        {commissions.length > 0 && (
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Commissions Spécialisées</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {commissions.map((commission) => (
+                <CommissionCard key={commission.id} commission={commission} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Partenaires */}
         <div className="mb-16">
