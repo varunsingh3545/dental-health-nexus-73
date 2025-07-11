@@ -7,25 +7,29 @@ export default function Organigramme() {
       title: "Président",
       name: "Dr. [Nom]",
       icon: Award,
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-600 to-blue-700",
+      imageUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face"
     },
     vicePresident: {
       title: "Vice-Président",
       name: "Dr. [Nom]",
       icon: UserCheck,
-      color: "from-cyan-500 to-cyan-600"
+      color: "from-cyan-500 to-cyan-600",
+      imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face"
     },
     secretaire: {
       title: "Secrétaire Général",
       name: "[Nom]",
       icon: Users,
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-500 to-blue-600",
+      imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face"
     },
     tresorier: {
       title: "Trésorier",
       name: "[Nom]",
       icon: Building2,
-      color: "from-teal-500 to-teal-600"
+      color: "from-teal-500 to-teal-600",
+      imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
     },
     commissions: [
       {
@@ -33,21 +37,24 @@ export default function Organigramme() {
         description: "Actions de prévention et sensibilisation",
         icon: Shield,
         members: ["Dr. [Nom]", "[Nom]", "[Nom]"],
-        color: "from-green-500 to-green-600"
+        color: "from-green-500 to-green-600",
+        imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop&crop=center"
       },
       {
         title: "Commission Formation",
         description: "Programmes de formation professionnelle",
         icon: BookOpen,
         members: ["Dr. [Nom]", "[Nom]", "[Nom]"],
-        color: "from-purple-500 to-purple-600"
+        color: "from-purple-500 to-purple-600",
+        imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=150&h=150&fit=crop&crop=center"
       },
       {
         title: "Commission Santé Publique",
         description: "Politiques de santé bucco-dentaire",
         icon: Heart,
         members: ["Dr. [Nom]", "[Nom]", "[Nom]"],
-        color: "from-red-500 to-red-600"
+        color: "from-red-500 to-red-600",
+        imageUrl: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=center"
       }
     ]
   };
@@ -57,8 +64,19 @@ export default function Organigramme() {
     return (
       <Card className={`transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${person.color} text-white ${className}`}>
         <CardHeader className="text-center pb-4">
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <IconComponent className="h-8 w-8 text-white" />
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 overflow-hidden">
+            {person.imageUrl ? (
+              <img 
+                src={person.imageUrl} 
+                alt={person.name}
+                className="w-full h-full object-cover rounded-2xl"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <IconComponent className={`h-8 w-8 text-white ${person.imageUrl ? 'hidden' : ''}`} />
           </div>
           <CardTitle className="text-xl text-white drop-shadow-md">{person.title}</CardTitle>
         </CardHeader>
@@ -74,8 +92,19 @@ export default function Organigramme() {
     return (
       <Card className={`h-full transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${commission.color} text-white`}>
         <CardHeader>
-          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3">
-            <IconComponent className="h-6 w-6 text-white" />
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+            {commission.imageUrl ? (
+              <img 
+                src={commission.imageUrl} 
+                alt={commission.title}
+                className="w-full h-full object-cover rounded-xl"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <IconComponent className={`h-6 w-6 text-white ${commission.imageUrl ? 'hidden' : ''}`} />
           </div>
           <CardTitle className="text-lg text-white drop-shadow-md">{commission.title}</CardTitle>
         </CardHeader>
