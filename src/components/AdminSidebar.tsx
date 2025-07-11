@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, CheckCircle, Users, LogOut, PenTool, FolderOpen } from 'lucide-react';
+import { LayoutDashboard, FileText, CheckCircle, Users, LogOut, PenTool, FolderOpen, Network } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,6 +24,7 @@ const managementItems = [
   { title: 'Pending Posts', url: '/admin/pending', icon: FileText },
   { title: 'Approved Posts', url: '/admin/approved', icon: CheckCircle },
   { title: 'Gallery Management', url: '/admin/gallery', icon: FolderOpen },
+  { title: 'Organigramme', url: '/admin/organigramme', icon: Network },
 ];
 
 const adminItems = [
@@ -45,6 +46,14 @@ export function AdminSidebar() {
   // Filter items based on role
   const filteredAdminItems = adminItems.filter(item => {
     if (item.url === '/admin/users' && userRole !== 'admin') {
+      return false;
+    }
+    return true;
+  });
+
+  // Filter management items based on role (organigramme only for doctor/admin)
+  const filteredManagementItems = managementItems.filter(item => {
+    if (item.url === '/admin/organigramme' && userRole !== 'admin' && userRole !== 'doctor') {
       return false;
     }
     return true;
@@ -98,7 +107,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Gestion des Articles</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {managementItems.map((item) => (
+              {filteredManagementItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
