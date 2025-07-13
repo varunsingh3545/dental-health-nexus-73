@@ -206,6 +206,39 @@ export class OrganigramService {
   }
 
   /**
+   * Upload an image to Supabase storage and insert metadata into gallery_images
+   */
+  static async uploadImage(file: File, memberId: string): Promise<{ id: string } | null> {
+    try {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error('Not authenticated');
+      const filePath = `${user.id}/${memberId}_${file.name}`;
+      // Upload to storage
+      const { data: storageData, error: storageError } = await supabase.storage
+        .from('gallery')
+        .upload(filePath, file, { upsert: true });
+      if (storageError) throw storageError;
+      // Insert metadata into gallery_images
+      const { data: imageData, error: imageError } = await supabase
+        .from('gallery_images')
+        .insert({
+          name: file.name,
+          file_path: filePath,
+          file_size: file.size,
+          file_type: file.type,
+          uploaded_by: user.id,
+        })
+        .select('id')
+        .single();
+      if (imageError) throw imageError;
+      return imageData;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+  }
+
+  /**
    * Get available roles
    */
   static getAvailableRoles(): { value: OrganigramRole; label: string; description: string }[] {

@@ -9,12 +9,19 @@ export class GalleryService {
   /**
    * Upload an image to the gallery
    */
-  static async uploadImage(file: File, userId: string): Promise<GalleryImage | null> {
+  static async uploadImage(file: File, userId?: string): Promise<GalleryImage | null> {
     try {
+      // Get userId if not provided
+      let uid = userId;
+      if (!uid) {
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+        if (authError || !authData?.user?.id) throw new Error('Utilisateur non authentifié.');
+        uid = authData.user.id;
+      }
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const filePath = `${uid}/${fileName}`;
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
@@ -26,10 +33,10 @@ export class GalleryService {
         throw new Error(`Upload failed: ${uploadError.message}`);
       }
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
+      // Get signed URL
+      const { data: urlData } = await supabase.storage
         .from('gallery')
-        .getPublicUrl(filePath);
+        .createSignedUrl(filePath, 3600);
 
       // Save metadata to database
       const { data: dbData, error: dbError } = await supabase
@@ -39,7 +46,7 @@ export class GalleryService {
           file_path: filePath,
           file_size: file.size,
           file_type: file.type,
-          uploaded_by: userId
+          uploaded_by: uid
         })
         .select()
         .single();
@@ -53,9 +60,8 @@ export class GalleryService {
 
       return {
         ...dbData,
-        url: urlData.publicUrl
+        url: urlData?.signedUrl || ''
       };
-
     } catch (error) {
       console.error('Gallery upload error:', error);
       throw error;
