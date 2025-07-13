@@ -6,6 +6,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ContactForm } from '@/components/ContactForm';
 import { Heart, Shield, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import doctorHeroImage from '@/assets/doctor-hero.jpg';
+import { supabase } from '@/integrations/supabase/client';
+
+// Test if we can query the table
+supabase.from('gallery_images').select('*').then(result => {
+  console.log('Database test:', result);
+});
+
+// Test if we can access storage
+supabase.storage.from('gallery').list().then(result => {
+  console.log('Storage test:', result);
+});
 const Index = () => {
   const {
     user,
@@ -63,9 +74,6 @@ const Index = () => {
               <Button variant="ghost" asChild className="hover:text-primary transition-colors">
                 <Link to="/contact">Contact</Link>
               </Button>
-              <Button variant="ghost" asChild className="hover:text-primary transition-colors">
-                <Link to="/write-blog">✍️ Écrire</Link>
-              </Button>
             {user ? (
               <div className="hidden md:flex items-center space-x-4">
                 {(userRole === 'admin' || userRole === 'author') && (
@@ -112,9 +120,6 @@ const Index = () => {
                 </Button>
                 <Button variant="ghost" asChild className="justify-start hover:text-primary transition-colors">
                   <Link to="/contact" onClick={() => setShowMobileNav(false)}>Contact</Link>
-                </Button>
-                <Button variant="ghost" asChild className="justify-start hover:text-primary transition-colors">
-                  <Link to="/write-blog" onClick={() => setShowMobileNav(false)}>✍️ Écrire</Link>
                 </Button>
                 {user ? (
                   <>
@@ -299,7 +304,8 @@ const Index = () => {
               <h3 className="text-xl font-semibold text-yellow-300">Contact</h3>
               <div className="space-y-2 text-blue-200">
                 <p>📧 Email: ufsbd34@ufsbd.fr</p>
-                <p>📍 Hérault, France</p>
+                <p>📍 283 rue Alfred Nobel, 34200 Montpellier</p>
+                <p>📞 Téléphone: 06 86 30 62 04</p>
               </div>
             </div>
             <div className="space-y-4">

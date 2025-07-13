@@ -60,36 +60,36 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      title: 'Total Posts',
+      title: 'Total Articles',
       value: stats.totalPosts,
       icon: FileText,
-      description: 'All blog posts'
+      description: 'Tous les articles de blog'
     },
     {
-      title: 'Pending Posts',
+      title: 'Articles en attente',
       value: stats.pendingPosts,
       icon: Clock,
-      description: 'Awaiting approval'
+      description: 'En attente d\'approbation'
     },
     {
-      title: 'Approved Posts',
+      title: 'Articles approuvés',
       value: stats.approvedPosts,
       icon: CheckCircle,
-      description: 'Published posts'
+      description: 'Articles publiés'
     },
     {
-      title: 'Total Users',
+      title: 'Total Utilisateurs',
       value: stats.totalUsers,
       icon: Users,
-      description: 'Registered users'
+      description: 'Utilisateurs enregistrés'
     }
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome to UFSBD Admin Dashboard</p>
+        <h1 className="text-3xl font-bold">Tableau de bord</h1>
+        <p className="text-muted-foreground">Bienvenue sur le tableau de bord administrateur UFSBD</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -17,19 +17,19 @@ import {
 } from '@/components/ui/sidebar';
 
 const writingItems = [
-  { title: 'Write Article', url: '/submit', icon: PenTool },
+  { title: 'Écrire un article', url: '/submit', icon: PenTool },
 ];
 
 const managementItems = [
-  { title: 'Pending Posts', url: '/admin/pending', icon: FileText },
-  { title: 'Approved Posts', url: '/admin/approved', icon: CheckCircle },
-  { title: 'Gallery Management', url: '/admin/gallery', icon: FolderOpen },
+  { title: 'Articles en attente', url: '/admin/pending', icon: FileText },
+  { title: 'Articles approuvés', url: '/admin/approved', icon: CheckCircle },
+  { title: 'Gestion Galerie', url: '/admin/gallery', icon: FolderOpen },
   { title: 'Organigramme', url: '/admin/organigramme', icon: Network },
 ];
 
 const adminItems = [
-  { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-  { title: 'Users', url: '/admin/users', icon: Users },
+  { title: 'Tableau de bord', url: '/admin', icon: LayoutDashboard },
+  { title: 'Utilisateurs', url: '/admin/users', icon: Users },
 ];
 
 export function AdminSidebar() {
@@ -129,7 +129,7 @@ export function AdminSidebar() {
             size={collapsed ? "icon" : "default"}
           >
             <LogOut className="h-4 w-4" />
-            {!collapsed && <span className="ml-2">Sign Out</span>}
+            {!collapsed && <span className="ml-2">Déconnexion</span>}
           </Button>
         </div>
       </SidebarContent>

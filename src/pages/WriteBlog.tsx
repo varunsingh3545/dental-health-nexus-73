@@ -21,7 +21,6 @@ export default function WriteBlog() {
     title: '',
     content: '',
     category: '',
-    authorEmail: user?.email || '',
     image: ''
   });
 
@@ -72,7 +71,7 @@ export default function WriteBlog() {
           title: formData.title,
           content: formData.content,
           category: formData.category,
-          author_email: formData.authorEmail,
+          author_email: user.email,
           author_id: user.id,
           image: formData.image || null,
           status: 'pending'
@@ -90,7 +89,6 @@ export default function WriteBlog() {
         title: '',
         content: '',
         category: '',
-        authorEmail: user?.email || '',
         image: ''
       });
 
@@ -185,18 +183,7 @@ export default function WriteBlog() {
               <CardTitle className="text-2xl gradient-text">Rédiger votre article</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Author Email */}
-              <div className="space-y-2">
-                <Label htmlFor="authorEmail">Email de l'auteur *</Label>
-                <Input
-                  id="authorEmail"
-                  type="email"
-                  value={formData.authorEmail}
-                  onChange={(e) => handleInputChange('authorEmail', e.target.value)}
-                  placeholder="votre.email@exemple.com"
-                  required
-                />
-              </div>
+
 
               {/* Title */}
               <div className="space-y-2">

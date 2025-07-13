@@ -32,65 +32,69 @@ export default function Organigramme() {
         const defaultData: OrgMemberData[] = [
           {
             id: '1',
-            name: 'Dr. Jean Dupont',
-            title: 'Président',
+            name: 'Dr Amélie Cherbonneau & Dr Abdessamed Abdessadok',
+            title: 'Co-présidents',
             type: 'president',
             image_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
             color: 'from-blue-600 to-blue-700'
           },
           {
             id: '2',
-            name: 'Dr. Marie Martin',
-            title: 'Vice-Présidente',
-            type: 'vicePresident',
-            image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
-            color: 'from-cyan-500 to-cyan-600'
-          },
-          {
-            id: '3',
-            name: 'Pierre Durand',
-            title: 'Secrétaire Général',
+            name: 'Dr Hélène Sabatier',
+            title: 'Secrétaire générale',
             type: 'secretaire',
-            image_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face',
+            image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
             color: 'from-blue-500 to-blue-600'
           },
           {
+            id: '3',
+            name: 'Dr Alexandre Yèche',
+            title: 'Secrétaire général adjoint',
+            type: 'secretaireAdjoint',
+            image_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face',
+            color: 'from-cyan-500 to-cyan-600'
+          },
+          {
             id: '4',
-            name: 'Sophie Bernard',
-            title: 'Trésorière',
+            name: 'Dr Pascal Rouzeyre',
+            title: 'Trésorier',
             type: 'tresorier',
             image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
             color: 'from-teal-500 to-teal-600'
           },
           {
             id: '5',
-            name: 'Commission Prévention',
-            title: 'Commission Prévention',
-            type: 'commission',
+            name: 'Dr Vincent Tiers',
+            title: 'Trésorier adjoint',
+            type: 'tresorierAdjoint',
             image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop&crop=center',
-            description: 'Actions de prévention et sensibilisation',
-            members: ['Dr. Alice Moreau', 'Dr. Paul Lefebvre', 'Claire Rousseau'],
             color: 'from-green-500 to-green-600'
           },
           {
             id: '6',
-            name: 'Commission Formation',
-            title: 'Commission Formation',
-            type: 'commission',
+            name: 'Vice-présidents',
+            title: 'Vice-présidents',
+            type: 'vicePresidents',
             image_url: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=150&h=150&fit=crop&crop=center',
-            description: 'Programmes de formation professionnelle',
-            members: ['Dr. Michel Blanc', 'Dr. Anne Petit', 'Laurent Simon'],
+            description: 'Dr Aline Rouyre, Dr Delphine Gautier, Dr Cédric Bourgeois, Mr Adam Bouanfir (étudiant)',
             color: 'from-purple-500 to-purple-600'
           },
           {
             id: '7',
-            name: 'Commission Santé Publique',
-            title: 'Commission Santé Publique',
-            type: 'commission',
+            name: 'Chargés de mission',
+            title: 'Chargés de mission',
+            type: 'chargesMission',
             image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=center',
-            description: 'Politiques de santé bucco-dentaire',
-            members: ['Dr. Emma Roussel', 'Dr. Thomas Moreau', 'Julie Bertrand'],
+            description: 'Dr Roselyne Trouche, Dr Meriem Ksibi, Dr Patrice Giammateï',
             color: 'from-red-500 to-red-600'
+          },
+          {
+            id: '8',
+            name: 'Dr Pascale Casanova',
+            title: 'Vérificateur aux comptes',
+            type: 'verificateur',
+            image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=center',
+            color: 'from-orange-500 to-orange-600'
           }
         ];
         setOrgData(defaultData);
@@ -105,18 +109,24 @@ export default function Organigramme() {
 
   // Group data by type
   const president = orgData.find(member => member.type === 'president');
-  const vicePresident = orgData.find(member => member.type === 'vicePresident');
   const secretaire = orgData.find(member => member.type === 'secretaire');
+  const secretaireAdjoint = orgData.find(member => member.type === 'secretaireAdjoint');
   const tresorier = orgData.find(member => member.type === 'tresorier');
-  const commissions = orgData.filter(member => member.type === 'commission');
+  const tresorierAdjoint = orgData.find(member => member.type === 'tresorierAdjoint');
+  const vicePresidents = orgData.find(member => member.type === 'vicePresidents');
+  const chargesMission = orgData.find(member => member.type === 'chargesMission');
+  const verificateur = orgData.find(member => member.type === 'verificateur');
 
   const getIcon = (type: string) => {
     const iconMap = {
       president: Award,
-      vicePresident: UserCheck,
+      vicePresidents: UserCheck,
       secretaire: Users,
+      secretaireAdjoint: Users,
       tresorier: Building2,
-      commission: Heart
+      tresorierAdjoint: Building2,
+      chargesMission: Heart,
+      verificateur: Award
     };
     return iconMap[type as keyof typeof iconMap] || Users;
   };
@@ -201,14 +211,14 @@ export default function Organigramme() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-12">
+      <header className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-12">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl font-bold mb-4 drop-shadow-lg">Organigramme UFSBD</h1>
           <p className="text-xl text-blue-100 drop-shadow-md">
             Section Hérault - Structure organisationnelle
           </p>
         </div>
-      </div>
+      </header>
 
       <div className="container mx-auto px-4 py-12">
         {/* Bureau */}
@@ -229,11 +239,16 @@ export default function Organigramme() {
             </>
           )}
           
-          {/* Vice-Président, Secrétaire, Trésorier */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {vicePresident && <OrgCard person={vicePresident} />}
+          {/* Secrétaire, Trésorier */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {secretaire && <OrgCard person={secretaire} />}
             {tresorier && <OrgCard person={tresorier} />}
+          </div>
+          
+          {/* Secrétaire adjoint, Trésorier adjoint */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-8">
+            {secretaireAdjoint && <OrgCard person={secretaireAdjoint} />}
+            {tresorierAdjoint && <OrgCard person={tresorierAdjoint} />}
           </div>
         </div>
 
@@ -269,14 +284,21 @@ export default function Organigramme() {
           </Card>
         </div>
 
-        {/* Commissions */}
-        {commissions.length > 0 && (
+        {/* Vice-présidents et Chargés de mission */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Vice-présidents et Chargés de mission</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {vicePresidents && <CommissionCard commission={vicePresidents} />}
+            {chargesMission && <CommissionCard commission={chargesMission} />}
+          </div>
+        </div>
+        
+        {/* Vérificateur aux comptes */}
+        {verificateur && (
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Commissions Spécialisées</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {commissions.map((commission) => (
-                <CommissionCard key={commission.id} commission={commission} />
-              ))}
+            <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Vérificateur aux comptes</h2>
+            <div className="flex justify-center">
+              <OrgCard person={verificateur} className="w-80" />
             </div>
           </div>
         )}
