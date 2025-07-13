@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserCheck, Award, Building2, Heart, BookOpen, Shield } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Users, UserCheck, Award, Building2, Heart, BookOpen, Shield, Crown, UserCog } from 'lucide-react';
 import { OrganigramService, type OrganigramMember } from '@/lib/organigram';
 
 export default function Organigramme() {
@@ -22,87 +23,93 @@ export default function Organigramme() {
     }
   };
 
-  // Group data by type
-  const president = orgData.find(member => member.role === 'president');
-  const secretaire = orgData.find(member => member.role === 'secretaire');
-  const secretaireAdjoint = orgData.find(member => member.role === 'secretaireAdjoint');
-  const tresorier = orgData.find(member => member.role === 'tresorier');
-  const tresorierAdjoint = orgData.find(member => member.role === 'tresorierAdjoint');
-  const vicePresidents = orgData.find(member => member.role === 'vicePresidents');
-  const chargesMission = orgData.find(member => member.role === 'chargesMission');
-  const verificateur = orgData.find(member => member.role === 'verificateur');
-
   const getIcon = (role: string) => {
     const iconMap = {
-      president: Award,
+      president: Crown,
       vicePresidents: UserCheck,
-      secretaire: Users,
-      secretaireAdjoint: Users,
-      tresorier: Building2,
-      tresorierAdjoint: Building2,
-      chargesMission: Heart,
+      secretaire: BookOpen,
+      secretaireAdjoint: BookOpen,
+      tresorier: Shield,
+      tresorierAdjoint: Shield,
+      chargesMission: UserCog,
       verificateur: Award
     };
     return iconMap[role as keyof typeof iconMap] || Users;
   };
 
-  const OrgCard = ({ person, className = "" }: { person: OrganigramMember, className?: string }) => {
-    const IconComponent = getIcon(person.role);
-    return (
-      <Card className={`transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${person.color || 'from-blue-500 to-blue-600'} text-white ${className}`}>
-        <CardHeader className="text-center pb-4">
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 overflow-hidden">
-            {person.image?.url ? (
-              <img 
-                src={person.image.url} 
-                alt={person.name}
-                className="w-full h-full object-cover rounded-2xl"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-            ) : null}
-            <IconComponent className={`h-8 w-8 text-white ${person.image?.url ? 'hidden' : ''}`} />
-          </div>
-          <CardTitle className="text-xl text-white drop-shadow-md">{person.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="text-center">
-          <p className="text-white/90 font-medium">{person.name}</p>
-        </CardContent>
-      </Card>
-    );
+  const getRoleLabel = (role: string) => {
+    return OrganigramService.getRoleLabel(role as any);
   };
 
-  const CommissionCard = ({ commission }: { commission: OrganigramMember }) => {
-    const IconComponent = getIcon(commission.role);
+  const getRoleColor = (role: string) => {
+    const colorMap = {
+      president: 'bg-gradient-to-r from-blue-600 to-blue-700',
+      vicePresidents: 'bg-gradient-to-r from-purple-500 to-purple-600',
+      secretaire: 'bg-gradient-to-r from-blue-500 to-blue-600',
+      secretaireAdjoint: 'bg-gradient-to-r from-cyan-500 to-cyan-600',
+      tresorier: 'bg-gradient-to-r from-teal-500 to-teal-600',
+      tresorierAdjoint: 'bg-gradient-to-r from-green-500 to-green-600',
+      chargesMission: 'bg-gradient-to-r from-red-500 to-red-600',
+      verificateur: 'bg-gradient-to-r from-orange-500 to-orange-600'
+    };
+    return colorMap[role as keyof typeof colorMap] || 'bg-gradient-to-r from-blue-500 to-blue-600';
+  };
+
+  const MemberCard = ({ member }: { member: OrganigramMember }) => {
+    const IconComponent = getIcon(member.role);
+    const roleColor = getRoleColor(member.role);
+    
     return (
-      <Card className={`h-full transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${commission.color || 'from-blue-500 to-blue-600'} text-white`}>
-        <CardHeader>
-          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 overflow-hidden">
-            {commission.image?.url ? (
+      <Card className={`h-full transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 ${roleColor} text-white overflow-hidden`}>
+        <CardHeader className="text-center pb-4 relative">
+          {/* Background pattern */}
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+          
+          {/* Image or Icon */}
+          <div className="relative z-10 w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden border-2 border-white/30">
+            {member.image?.url ? (
               <img 
-                src={commission.image.url} 
-                alt={commission.title}
-                className="w-full h-full object-cover rounded-xl"
+                src={member.image.url} 
+                alt={member.name}
+                className="w-full h-full object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   e.currentTarget.nextElementSibling?.classList.remove('hidden');
                 }}
               />
             ) : null}
-            <IconComponent className={`h-6 w-6 text-white ${commission.image?.url ? 'hidden' : ''}`} />
+            <IconComponent className={`h-10 w-10 text-white ${member.image?.url ? 'hidden' : ''}`} />
           </div>
-          <CardTitle className="text-lg text-white drop-shadow-md">{commission.title}</CardTitle>
+          
+          {/* Role Badge */}
+          <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mb-2">
+            {getRoleLabel(member.role)}
+          </Badge>
+          
+          {/* Title */}
+          <CardTitle className="text-xl text-white drop-shadow-md font-bold">
+            {member.title}
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {commission.description && <p className="text-white/90 text-sm">{commission.description}</p>}
-          {commission.members && commission.members.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-white font-medium text-sm">Membres:</h4>
+        
+        <CardContent className="text-center relative z-10">
+          {/* Name */}
+          <p className="text-white/95 font-semibold text-lg mb-3">{member.name}</p>
+          
+          {/* Description */}
+          {member.description && (
+            <p className="text-white/80 text-sm leading-relaxed">
+              {member.description}
+            </p>
+          )}
+          
+          {/* Members list for commissions */}
+          {member.members && member.members.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-white/20">
+              <h4 className="text-white font-medium text-sm mb-2">Membres:</h4>
               <ul className="space-y-1">
-                {commission.members.map((member: string, index: number) => (
-                  <li key={index} className="text-white/80 text-xs">• {member}</li>
+                {member.members.map((memberName: string, index: number) => (
+                  <li key={index} className="text-white/80 text-xs">• {memberName}</li>
                 ))}
               </ul>
             </div>
@@ -123,124 +130,80 @@ export default function Organigramme() {
     );
   }
 
+  // Group members by role for better organization
+  const president = orgData.find(member => member.role === 'president');
+  const bureauMembers = orgData.filter(member => 
+    ['secretaire', 'secretaireAdjoint', 'tresorier', 'tresorierAdjoint'].includes(member.role)
+  );
+  const otherMembers = orgData.filter(member => 
+    ['vicePresidents', 'chargesMission', 'verificateur'].includes(member.role)
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-12">
+      <header className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4 drop-shadow-lg">Organigramme UFSBD</h1>
+          <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">Organigramme UFSBD</h1>
           <p className="text-xl text-blue-100 drop-shadow-md">
             Section Hérault - Structure organisationnelle
+          </p>
+          <p className="text-blue-200 mt-2">
+            Notre équipe dédiée à la santé bucco-dentaire
           </p>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-12">
-        {/* Bureau */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Bureau Exécutif</h2>
-          
-          {/* Président */}
-          {president && (
-            <>
-              <div className="flex justify-center mb-8">
-                <OrgCard person={president} className="w-80" />
-              </div>
-              
-              {/* Ligne de direction */}
-              <div className="flex justify-center mb-4">
-                <div className="w-px h-8 bg-gray-300"></div>
-              </div>
-            </>
-          )}
-          
-          {/* Secrétaire, Trésorier */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {secretaire && <OrgCard person={secretaire} />}
-            {tresorier && <OrgCard person={tresorier} />}
-          </div>
-          
-          {/* Secrétaire adjoint, Trésorier adjoint */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-8">
-            {secretaireAdjoint && <OrgCard person={secretaireAdjoint} />}
-            {tresorierAdjoint && <OrgCard person={tresorierAdjoint} />}
-          </div>
-        </div>
-
-        {/* Conseil d'Administration */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Conseil d'Administration</h2>
-          <Card className="bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-center text-xl">Membres du Conseil</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4 text-center">
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-gray-700">Professionnels de Santé</h4>
-                  <ul className="space-y-1 text-sm text-gray-600">
-                    <li>• Dr. [Nom] - Chirurgien-Dentiste</li>
-                    <li>• Dr. [Nom] - Parodontiste</li>
-                    <li>• Dr. [Nom] - Orthodontiste</li>
-                    <li>• [Nom] - Hygiéniste Dentaire</li>
-                  </ul>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-gray-700">Représentants Institutionnels</h4>
-                  <ul className="space-y-1 text-sm text-gray-600">
-                    <li>• Représentant ARS Occitanie</li>
-                    <li>• Représentant Conseil Départemental</li>
-                    <li>• Représentant Éducation Nationale</li>
-                    <li>• Représentant Ordre des Dentistes</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Vice-présidents et Chargés de mission */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Vice-présidents et Chargés de mission</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            {vicePresidents && <CommissionCard commission={vicePresidents} />}
-            {chargesMission && <CommissionCard commission={chargesMission} />}
-          </div>
-        </div>
-        
-        {/* Vérificateur aux comptes */}
-        {verificateur && (
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Vérificateur aux comptes</h2>
+      <div className="container mx-auto px-4 py-16">
+        {/* Président */}
+        {president && (
+          <div className="mb-20">
+            <h2 className="text-3xl font-bold text-center mb-12 gradient-text">Présidence</h2>
             <div className="flex justify-center">
-              <OrgCard person={verificateur} className="w-80" />
+              <div className="max-w-md">
+                <MemberCard member={president} />
+              </div>
             </div>
           </div>
         )}
 
-        {/* Partenaires */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8 gradient-text">Partenaires & Collaborateurs</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { name: "ARS Occitanie", type: "Autorité de Santé" },
-              { name: "Conseil Départemental 34", type: "Institution" },
-              { name: "Rectorat de Montpellier", type: "Éducation" },
-              { name: "Ordre des Dentistes", type: "Ordre Professionnel" },
-              { name: "CPAM Hérault", type: "Assurance Maladie" },
-              { name: "Mutuelles Santé", type: "Complémentaires" },
-              { name: "Établissements Scolaires", type: "Éducation" },
-              { name: "Centres de Santé", type: "Santé Publique" }
-            ].map((partner, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6">
-                  <h4 className="font-semibold text-gray-800">{partner.name}</h4>
-                  <p className="text-sm text-gray-500 mt-1">{partner.type}</p>
-                </CardContent>
-              </Card>
-            ))}
+        {/* Bureau Exécutif */}
+        {bureauMembers.length > 0 && (
+          <div className="mb-20">
+            <h2 className="text-3xl font-bold text-center mb-12 gradient-text">Bureau Exécutif</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+              {bureauMembers.map((member) => (
+                <MemberCard key={member.id} member={member} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Autres Membres */}
+        {otherMembers.length > 0 && (
+          <div className="mb-20">
+            <h2 className="text-3xl font-bold text-center mb-12 gradient-text">Équipe de Direction</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {otherMembers.map((member) => (
+                <MemberCard key={member.id} member={member} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tous les Membres (Vue d'ensemble) */}
+        {orgData.length > 0 && (
+          <div className="mb-20">
+            <h2 className="text-3xl font-bold text-center mb-12 gradient-text">Vue d'Ensemble</h2>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
+              {orgData.map((member) => (
+                <div key={member.id} className="transform transition-all duration-300 hover:scale-105">
+                  <MemberCard member={member} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Contact */}
         <div className="text-center">
