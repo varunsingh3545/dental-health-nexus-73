@@ -1,20 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, UserCheck, Award, Building2, Heart, BookOpen, Shield } from 'lucide-react';
-
-interface OrgMemberData {
-  id: string;
-  name: string;
-  title: string;
-  type: string;
-  image_url?: string;
-  description?: string;
-  members?: string[];
-  color?: string;
-}
+import { OrganigramService, type OrganigramMember } from '@/lib/organigram';
 
 export default function Organigramme() {
-  const [orgData, setOrgData] = useState<OrgMemberData[]>([]);
+  const [orgData, setOrgData] = useState<OrganigramMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,83 +13,8 @@ export default function Organigramme() {
 
   const fetchOrgData = async () => {
     try {
-      // Get data from localStorage or use default data
-      const storedData = localStorage.getItem('organigramme_data');
-      if (storedData) {
-        setOrgData(JSON.parse(storedData));
-      } else {
-        // Default data if none exists
-        const defaultData: OrgMemberData[] = [
-          {
-            id: '1',
-            name: 'Dr Amélie Cherbonneau & Dr Abdessamed Abdessadok',
-            title: 'Co-présidents',
-            type: 'president',
-            image_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
-            color: 'from-blue-600 to-blue-700'
-          },
-          {
-            id: '2',
-            name: 'Dr Hélène Sabatier',
-            title: 'Secrétaire générale',
-            type: 'secretaire',
-            image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
-            color: 'from-blue-500 to-blue-600'
-          },
-          {
-            id: '3',
-            name: 'Dr Alexandre Yèche',
-            title: 'Secrétaire général adjoint',
-            type: 'secretaireAdjoint',
-            image_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face',
-            color: 'from-cyan-500 to-cyan-600'
-          },
-          {
-            id: '4',
-            name: 'Dr Pascal Rouzeyre',
-            title: 'Trésorier',
-            type: 'tresorier',
-            image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-            color: 'from-teal-500 to-teal-600'
-          },
-          {
-            id: '5',
-            name: 'Dr Vincent Tiers',
-            title: 'Trésorier adjoint',
-            type: 'tresorierAdjoint',
-            image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop&crop=center',
-            color: 'from-green-500 to-green-600'
-          },
-          {
-            id: '6',
-            name: 'Vice-présidents',
-            title: 'Vice-présidents',
-            type: 'vicePresidents',
-            image_url: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=150&h=150&fit=crop&crop=center',
-            description: 'Dr Aline Rouyre, Dr Delphine Gautier, Dr Cédric Bourgeois, Mr Adam Bouanfir (étudiant)',
-            color: 'from-purple-500 to-purple-600'
-          },
-          {
-            id: '7',
-            name: 'Chargés de mission',
-            title: 'Chargés de mission',
-            type: 'chargesMission',
-            image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=center',
-            description: 'Dr Roselyne Trouche, Dr Meriem Ksibi, Dr Patrice Giammateï',
-            color: 'from-red-500 to-red-600'
-          },
-          {
-            id: '8',
-            name: 'Dr Pascale Casanova',
-            title: 'Vérificateur aux comptes',
-            type: 'verificateur',
-            image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=center',
-            color: 'from-orange-500 to-orange-600'
-          }
-        ];
-        setOrgData(defaultData);
-        localStorage.setItem('organigramme_data', JSON.stringify(defaultData));
-      }
+      const members = await OrganigramService.getMembers();
+      setOrgData(members);
     } catch (error) {
       console.error('Error fetching org data:', error);
     } finally {
@@ -108,16 +23,16 @@ export default function Organigramme() {
   };
 
   // Group data by type
-  const president = orgData.find(member => member.type === 'president');
-  const secretaire = orgData.find(member => member.type === 'secretaire');
-  const secretaireAdjoint = orgData.find(member => member.type === 'secretaireAdjoint');
-  const tresorier = orgData.find(member => member.type === 'tresorier');
-  const tresorierAdjoint = orgData.find(member => member.type === 'tresorierAdjoint');
-  const vicePresidents = orgData.find(member => member.type === 'vicePresidents');
-  const chargesMission = orgData.find(member => member.type === 'chargesMission');
-  const verificateur = orgData.find(member => member.type === 'verificateur');
+  const president = orgData.find(member => member.role === 'president');
+  const secretaire = orgData.find(member => member.role === 'secretaire');
+  const secretaireAdjoint = orgData.find(member => member.role === 'secretaireAdjoint');
+  const tresorier = orgData.find(member => member.role === 'tresorier');
+  const tresorierAdjoint = orgData.find(member => member.role === 'tresorierAdjoint');
+  const vicePresidents = orgData.find(member => member.role === 'vicePresidents');
+  const chargesMission = orgData.find(member => member.role === 'chargesMission');
+  const verificateur = orgData.find(member => member.role === 'verificateur');
 
-  const getIcon = (type: string) => {
+  const getIcon = (role: string) => {
     const iconMap = {
       president: Award,
       vicePresidents: UserCheck,
@@ -128,18 +43,18 @@ export default function Organigramme() {
       chargesMission: Heart,
       verificateur: Award
     };
-    return iconMap[type as keyof typeof iconMap] || Users;
+    return iconMap[role as keyof typeof iconMap] || Users;
   };
 
-  const OrgCard = ({ person, className = "" }: { person: OrgMemberData, className?: string }) => {
-    const IconComponent = getIcon(person.type);
+  const OrgCard = ({ person, className = "" }: { person: OrganigramMember, className?: string }) => {
+    const IconComponent = getIcon(person.role);
     return (
       <Card className={`transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${person.color || 'from-blue-500 to-blue-600'} text-white ${className}`}>
         <CardHeader className="text-center pb-4">
           <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 overflow-hidden">
-            {person.image_url ? (
+            {person.image?.url ? (
               <img 
-                src={person.image_url} 
+                src={person.image.url} 
                 alt={person.name}
                 className="w-full h-full object-cover rounded-2xl"
                 onError={(e) => {
@@ -148,7 +63,7 @@ export default function Organigramme() {
                 }}
               />
             ) : null}
-            <IconComponent className={`h-8 w-8 text-white ${person.image_url ? 'hidden' : ''}`} />
+            <IconComponent className={`h-8 w-8 text-white ${person.image?.url ? 'hidden' : ''}`} />
           </div>
           <CardTitle className="text-xl text-white drop-shadow-md">{person.title}</CardTitle>
         </CardHeader>
@@ -159,15 +74,15 @@ export default function Organigramme() {
     );
   };
 
-  const CommissionCard = ({ commission }: { commission: OrgMemberData }) => {
-    const IconComponent = getIcon(commission.type);
+  const CommissionCard = ({ commission }: { commission: OrganigramMember }) => {
+    const IconComponent = getIcon(commission.role);
     return (
       <Card className={`h-full transition-all hover:shadow-xl border border-white/20 bg-gradient-to-br ${commission.color || 'from-blue-500 to-blue-600'} text-white`}>
         <CardHeader>
           <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 overflow-hidden">
-            {commission.image_url ? (
+            {commission.image?.url ? (
               <img 
-                src={commission.image_url} 
+                src={commission.image.url} 
                 alt={commission.title}
                 className="w-full h-full object-cover rounded-xl"
                 onError={(e) => {
@@ -176,7 +91,7 @@ export default function Organigramme() {
                 }}
               />
             ) : null}
-            <IconComponent className={`h-6 w-6 text-white ${commission.image_url ? 'hidden' : ''}`} />
+            <IconComponent className={`h-6 w-6 text-white ${commission.image?.url ? 'hidden' : ''}`} />
           </div>
           <CardTitle className="text-lg text-white drop-shadow-md">{commission.title}</CardTitle>
         </CardHeader>

@@ -160,6 +160,72 @@ export type Database = {
           }
         ]
       }
+      organigram_members: {
+        Row: {
+          id: string
+          name: string
+          title: string
+          role: string
+          image_url: string | null
+          image_id: string | null
+          description: string | null
+          members: string[] | null
+          color: string | null
+          order_index: number | null
+          is_active: boolean | null
+          created_by: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          title: string
+          role: string
+          image_url?: string | null
+          image_id?: string | null
+          description?: string | null
+          members?: string[] | null
+          color?: string | null
+          order_index?: number | null
+          is_active?: boolean | null
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          title?: string
+          role?: string
+          image_url?: string | null
+          image_id?: string | null
+          description?: string | null
+          members?: string[] | null
+          color?: string | null
+          order_index?: number | null
+          is_active?: boolean | null
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organigram_members_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+          {
+            foreignKeyName: "organigram_members_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "gallery_images"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

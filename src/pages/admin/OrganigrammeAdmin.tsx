@@ -6,110 +6,47 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Save, Users, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Save, Users, Loader2, Image, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-interface OrgMember {
-  id: string;
-  name: string;
-  title: string;
-  image_url?: string;
-  type: 'president' | 'vicePresident' | 'secretaire' | 'tresorier' | 'commission';
-  description?: string;
-  members?: string[];
-  color?: string;
-}
+import { useAuth } from '@/hooks/useAuth';
+import { OrganigramService, type OrganigramMember, type OrganigramRole } from '@/lib/organigram';
+import { ImageSelector } from '@/components/ImageSelector';
 
 export default function OrganigrammeAdmin() {
   const { toast } = useToast();
-  const [orgData, setOrgData] = useState<OrgMember[]>([]);
+  const { user, userRole } = useAuth();
+  const [members, setMembers] = useState<OrganigramMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [newMember, setNewMember] = useState<Partial<OrgMember>>({
+  const [newMember, setNewMember] = useState<Partial<OrganigramMember>>({
     name: '',
     title: '',
-    type: 'commission',
-    image_url: '',
+    role: 'secretaire',
     description: '',
     members: [],
     color: 'from-blue-500 to-blue-600'
   });
   const [showAddForm, setShowAddForm] = useState(false);
 
-  useEffect(() => {
-    fetchOrgData();
-  }, []);
+  // Check if user has permission
+  const hasPermission = userRole === 'admin' || userRole === 'doctor';
 
-  const fetchOrgData = async () => {
+  useEffect(() => {
+    if (hasPermission) {
+      fetchMembers();
+    }
+  }, [hasPermission]);
+
+  const fetchMembers = async () => {
     try {
-      // Get data from localStorage or initialize with default data
-      const storedData = localStorage.getItem('organigramme_data');
-      if (storedData) {
-        setOrgData(JSON.parse(storedData));
-      } else {
-        // Initialize with default data
-        const defaultData: OrgMember[] = [
-          {
-            id: '1',
-            name: 'Dr. Jean Dupont',
-            title: 'Président',
-            type: 'president',
-            image_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
-            color: 'from-blue-600 to-blue-700'
-          },
-          {
-            id: '2',
-            name: 'Dr. Marie Martin',
-            title: 'Vice-Présidente',
-            type: 'vicePresident',
-            image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
-            color: 'from-cyan-500 to-cyan-600'
-          },
-          {
-            id: '3',
-            name: 'Pierre Durand',
-            title: 'Secrétaire Général',
-            type: 'secretaire',
-            image_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b789?w=150&h=150&fit=crop&crop=face',
-            color: 'from-blue-500 to-blue-600'
-          },
-          {
-            id: '4',
-            name: 'Sophie Bernard',
-            title: 'Trésorière',
-            type: 'tresorier',
-            image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-            color: 'from-teal-500 to-teal-600'
-          },
-          {
-            id: '5',
-            name: 'Commission Prévention',
-            title: 'Commission Prévention',
-            type: 'commission',
-            image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop&crop=center',
-            description: 'Actions de prévention et sensibilisation',
-            members: ['Dr. Alice Moreau', 'Dr. Paul Lefebvre', 'Claire Rousseau'],
-            color: 'from-green-500 to-green-600'
-          },
-          {
-            id: '6',
-            name: 'Commission Formation',
-            title: 'Commission Formation',
-            type: 'commission',
-            image_url: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=150&h=150&fit=crop&crop=center',
-            description: 'Programmes de formation professionnelle',
-            members: ['Dr. Michel Blanc', 'Dr. Anne Petit', 'Laurent Simon'],
-            color: 'from-purple-500 to-purple-600'
-          }
-        ];
-        setOrgData(defaultData);
-        localStorage.setItem('organigramme_data', JSON.stringify(defaultData));
-      }
+      setLoading(true);
+      const fetchedMembers = await OrganigramService.getMembers();
+      setMembers(fetchedMembers);
     } catch (error) {
-      console.error('Error fetching org data:', error);
+      console.error('Error fetching members:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de charger les données de l'organigramme.",
+        description: "Impossible de charger les membres de l'organigramme.",
         variant: "destructive"
       });
     } finally {
@@ -117,17 +54,14 @@ export default function OrganigrammeAdmin() {
     }
   };
 
-  const handleEdit = (member: OrgMember) => {
+  const handleEdit = (member: OrganigramMember) => {
     setEditingId(member.id);
   };
 
-  const handleSave = async (id: string, updatedData: Partial<OrgMember>) => {
+  const handleSave = async (id: string, updatedData: Partial<OrganigramMember>) => {
     try {
-      const updatedOrgData = orgData.map(item => 
-        item.id === id ? { ...item, ...updatedData } : item
-      );
-      setOrgData(updatedOrgData);
-      localStorage.setItem('organigramme_data', JSON.stringify(updatedOrgData));
+      await OrganigramService.updateMember(id, updatedData);
+      await fetchMembers(); // Refresh the list
       
       setEditingId(null);
       toast({
@@ -145,8 +79,8 @@ export default function OrganigrammeAdmin() {
   };
 
   const handleDelete = async (id: string) => {
-    const member = orgData.find(m => m.id === id);
-    if (member && ['president', 'vicePresident', 'secretaire', 'tresorier'].includes(member.type)) {
+    const member = members.find(m => m.id === id);
+    if (member && ['president', 'secretaire', 'tresorier'].includes(member.role)) {
       toast({
         title: "Suppression impossible",
         description: "Les postes du bureau exécutif ne peuvent pas être supprimés.",
@@ -156,9 +90,8 @@ export default function OrganigrammeAdmin() {
     }
     
     try {
-      const updatedOrgData = orgData.filter(item => item.id !== id);
-      setOrgData(updatedOrgData);
-      localStorage.setItem('organigramme_data', JSON.stringify(updatedOrgData));
+      await OrganigramService.deleteMember(id);
+      await fetchMembers(); // Refresh the list
       
       toast({
         title: "Membre supprimé",
@@ -175,7 +108,7 @@ export default function OrganigrammeAdmin() {
   };
 
   const handleAddMember = async () => {
-    if (!newMember.name || !newMember.title) {
+    if (!newMember.name || !newMember.title || !user) {
       toast({
         title: "Erreur",
         description: "Veuillez remplir au moins le nom et le titre.",
@@ -185,25 +118,32 @@ export default function OrganigrammeAdmin() {
     }
 
     try {
-      const id = Date.now().toString();
-      const memberWithId = { ...newMember, id } as OrgMember;
-      const updatedOrgData = [...orgData, memberWithId];
-      setOrgData(updatedOrgData);
-      localStorage.setItem('organigramme_data', JSON.stringify(updatedOrgData));
+      await OrganigramService.createMember({
+        name: newMember.name,
+        title: newMember.title,
+        role: newMember.role as OrganigramRole,
+        image_id: newMember.image_id,
+        description: newMember.description,
+        members: newMember.members,
+        color: newMember.color,
+        order_index: members.length + 1
+      }, user.id);
+      
+      await fetchMembers(); // Refresh the list
       
       setNewMember({
         name: '',
         title: '',
-        type: 'commission',
-        image_url: '',
+        role: 'secretaire',
         description: '',
         members: [],
         color: 'from-blue-500 to-blue-600'
       });
       setShowAddForm(false);
+      
       toast({
         title: "Membre ajouté",
-        description: "Le nouveau membre a été ajouté à l'organigramme."
+        description: "Le nouveau membre a été ajouté avec succès."
       });
     } catch (error) {
       console.error('Error adding member:', error);
@@ -215,120 +155,177 @@ export default function OrganigrammeAdmin() {
     }
   };
 
-  const getTypeLabel = (type: string) => {
-    const labels = {
-      president: 'Président',
-      vicePresident: 'Vice-Président',
-      secretaire: 'Secrétaire',
-      tresorier: 'Trésorier',
-      commission: 'Commission'
-    };
-    return labels[type as keyof typeof labels] || type;
+  const handleImageSelect = async (memberId: string, imageId: string | null) => {
+    try {
+      if (imageId) {
+        await OrganigramService.updateMemberImage(memberId, imageId);
+      } else {
+        await OrganigramService.updateMember(memberId, { image_id: null });
+      }
+      await fetchMembers(); // Refresh the list
+      
+      toast({
+        title: "Image mise à jour",
+        description: "L'image du membre a été mise à jour."
+      });
+    } catch (error) {
+      console.error('Error updating member image:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour l'image.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const EditForm = ({ member }: { member: OrgMember }) => {
-    const [formData, setFormData] = useState(member);
-    const [membersList, setMembersList] = useState(member.members?.join(', ') || '');
+  const getRoleLabel = (role: string) => {
+    return OrganigramService.getRoleLabel(role as OrganigramRole);
+  };
+
+  const getRoleDescription = (role: string) => {
+    return OrganigramService.getRoleDescription(role as OrganigramRole);
+  };
+
+  const availableRoles = OrganigramService.getAvailableRoles();
+
+  if (!hasPermission) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Users className="h-6 w-6" />
+            <h1 className="text-3xl font-bold">Gestion de l'Organigramme</h1>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-muted-foreground">
+                Vous n'avez pas les permissions nécessaires pour gérer l'organigramme.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Users className="h-6 w-6" />
+            <h1 className="text-3xl font-bold">Gestion de l'Organigramme</h1>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+              <p>Chargement de l'organigramme...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const EditForm = ({ member }: { member: OrganigramMember }) => {
+    const [formData, setFormData] = useState({
+      name: member.name,
+      title: member.title,
+      role: member.role,
+      description: member.description || '',
+      members: member.members || [],
+      color: member.color || OrganigramService.getDefaultColor(member.role as OrganigramRole)
+    });
+
+    const handleInputChange = (field: string, value: string | string[]) => {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    };
+
+    const handleSubmit = () => {
+      handleSave(member.id, formData);
+    };
 
     return (
-      <Card className="border-blue-200">
+      <Card className="border-blue-200 bg-blue-50/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Modifier: {member.title}
-          </CardTitle>
+          <CardTitle className="text-lg">Modifier le membre</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="name">Nom</Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Nom du membre"
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="title">Titre</Label>
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                placeholder="Titre du poste"
               />
             </div>
           </div>
           
-            <div>
-              <Label htmlFor="imageUrl">URL de l'image</Label>
-              <Input
-                id="imageUrl"
-                placeholder="https://example.com/image.jpg"
-                value={formData.image_url || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="role">Rôle</Label>
+            <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un rôle" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableRoles.map((role) => (
+                  <SelectItem key={role.value} value={role.value}>
+                    <div>
+                      <div className="font-medium">{role.label}</div>
+                      <div className="text-xs text-muted-foreground">{role.description}</div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div>
-              <Label htmlFor="color">Couleur du dégradé</Label>
-              <Select
-                value={formData.color || 'from-blue-500 to-blue-600'}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, color: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="from-blue-600 to-blue-700">Bleu foncé</SelectItem>
-                  <SelectItem value="from-cyan-500 to-cyan-600">Cyan</SelectItem>
-                  <SelectItem value="from-blue-500 to-blue-600">Bleu</SelectItem>
-                  <SelectItem value="from-teal-500 to-teal-600">Teal</SelectItem>
-                  <SelectItem value="from-green-500 to-green-600">Vert</SelectItem>
-                  <SelectItem value="from-purple-500 to-purple-600">Violet</SelectItem>
-                  <SelectItem value="from-red-500 to-red-600">Rouge</SelectItem>
-                  <SelectItem value="from-orange-500 to-orange-600">Orange</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              placeholder="Description du poste ou des responsabilités"
+              rows={3}
+            />
+          </div>
 
-          {member.type === 'commission' && (
-            <>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="members">Membres (séparés par des virgules)</Label>
-                <Textarea
-                  id="members"
-                  placeholder="Dr. Nom, Prénom Nom, ..."
-                  value={membersList}
-                  onChange={(e) => setMembersList(e.target.value)}
-                />
-              </div>
-            </>
-          )}
+          <div className="space-y-2">
+            <Label>Image de profil</Label>
+            <ImageSelector
+              selectedImageId={member.image_id}
+              onImageSelect={(imageId) => handleImageSelect(member.id, imageId)}
+              title="Sélectionner une image de profil"
+              description="Choisissez une image depuis la galerie pour ce membre"
+            />
+          </div>
 
-          <div className="flex gap-2 pt-4">
-            <Button 
-              onClick={() => handleSave(member.id, {
-                ...formData,
-                members: member.type === 'commission' 
-                  ? membersList.split(',').map(m => m.trim()).filter(m => m)
-                  : undefined
-              })}
-              className="bg-green-600 hover:bg-green-700"
-            >
+          <div className="flex space-x-2">
+            <Button onClick={handleSubmit} className="flex-1">
               <Save className="h-4 w-4 mr-2" />
               Sauvegarder
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => setEditingId(null)}
-            >
+            <Button variant="outline" onClick={() => setEditingId(null)}>
               Annuler
             </Button>
           </div>
@@ -337,100 +334,98 @@ export default function OrganigrammeAdmin() {
     );
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-96">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Users className="h-6 w-6" />
           <h1 className="text-3xl font-bold">Gestion de l'Organigramme</h1>
-          <p className="text-muted-foreground mt-2">
-            Gérez la structure organisationnelle de l'UFSBD Section Hérault
-          </p>
         </div>
-        <Button 
-          onClick={() => setShowAddForm(true)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter un membre
+        <Button onClick={() => setShowAddForm(!showAddForm)} className="flex items-center space-x-2">
+          <Plus className="h-4 w-4" />
+          <span>Ajouter un membre</span>
         </Button>
       </div>
 
-      {/* Add Member Form */}
+      {/* Add New Member Form */}
       {showAddForm && (
-        <Card className="border-green-200">
+        <Card className="border-green-200 bg-green-50/50">
           <CardHeader>
-            <CardTitle>Ajouter un nouveau membre</CardTitle>
+            <CardTitle className="text-lg">Ajouter un nouveau membre</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label htmlFor="newName">Nom</Label>
                 <Input
                   id="newName"
                   value={newMember.name}
                   onChange={(e) => setNewMember(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Nom du membre"
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="newTitle">Titre</Label>
                 <Input
                   id="newTitle"
                   value={newMember.title}
                   onChange={(e) => setNewMember(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Titre du poste"
                 />
               </div>
             </div>
             
-            <div>
-              <Label htmlFor="newImageUrl">URL de l'image</Label>
-              <Input
-                id="newImageUrl"
-                placeholder="https://example.com/image.jpg"
-                value={newMember.image_url}
-                onChange={(e) => setNewMember(prev => ({ ...prev, image_url: e.target.value }))}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="newType">Type</Label>
-              <Select
-                value={newMember.type}
-                onValueChange={(value) => setNewMember(prev => ({ ...prev, type: value as any }))}
+            <div className="space-y-2">
+              <Label htmlFor="newRole">Rôle</Label>
+              <Select 
+                value={newMember.role} 
+                onValueChange={(value) => setNewMember(prev => ({ 
+                  ...prev, 
+                  role: value as OrganigramRole,
+                  color: OrganigramService.getDefaultColor(value as OrganigramRole)
+                }))}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Sélectionner un rôle" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="commission">Commission</SelectItem>
-                  <SelectItem value="president">Président</SelectItem>
-                  <SelectItem value="vicePresident">Vice-Président</SelectItem>
-                  <SelectItem value="secretaire">Secrétaire</SelectItem>
-                  <SelectItem value="tresorier">Trésorier</SelectItem>
+                  {availableRoles.map((role) => (
+                    <SelectItem key={role.value} value={role.value}>
+                      <div>
+                        <div className="font-medium">{role.label}</div>
+                        <div className="text-xs text-muted-foreground">{role.description}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="newDescription">Description</Label>
               <Textarea
                 id="newDescription"
                 value={newMember.description}
                 onChange={(e) => setNewMember(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Description du poste ou des responsabilités"
+                rows={3}
               />
             </div>
 
-            <div className="flex gap-2">
-              <Button onClick={handleAddMember} className="bg-green-600 hover:bg-green-700">
+            <div className="space-y-2">
+              <Label>Image de profil</Label>
+              <ImageSelector
+                selectedImageId={newMember.image_id}
+                onImageSelect={(imageId) => setNewMember(prev => ({ ...prev, image_id: imageId }))}
+                title="Sélectionner une image de profil"
+                description="Choisissez une image depuis la galerie pour ce membre"
+              />
+            </div>
+
+            <div className="flex space-x-2">
+              <Button onClick={handleAddMember} className="flex-1">
                 <Plus className="h-4 w-4 mr-2" />
-                Ajouter
+                Ajouter le membre
               </Button>
               <Button variant="outline" onClick={() => setShowAddForm(false)}>
                 Annuler
@@ -441,62 +436,85 @@ export default function OrganigrammeAdmin() {
       )}
 
       {/* Members List */}
-      <div className="grid gap-4">
-        {orgData.map((member) => (
+      <div className="grid gap-6">
+        {members.map((member) => (
           <div key={member.id}>
             {editingId === member.id ? (
               <EditForm member={member} />
             ) : (
-              <Card className="hover:shadow-md transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2 flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-lg">{member.name}</h3>
-                        <Badge variant="secondary">
-                          {getTypeLabel(member.type)}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden">
+                        {member.image?.url ? (
+                          <img
+                            src={member.image.url}
+                            alt={member.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = '/placeholder.svg';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-muted">
+                            <Image className="h-8 w-8 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <CardTitle className="text-xl">{member.name}</CardTitle>
+                        <p className="text-muted-foreground">{member.title}</p>
+                        <Badge variant="secondary" className="mt-1">
+                          {getRoleLabel(member.role)}
                         </Badge>
                       </div>
-                      <p className="text-muted-foreground">{member.title}</p>
-                      {member.description && (
-                        <p className="text-sm text-gray-600">{member.description}</p>
-                      )}
-                      {member.members && member.members.length > 0 && (
-                        <div className="mt-2">
-                          <p className="text-sm font-medium">Membres:</p>
-                          <p className="text-sm text-gray-600">{member.members.join(', ')}</p>
-                        </div>
-                      )}
-                      {member.image_url && (
-                        <p className="text-xs text-blue-600">📷 Image: {member.image_url}</p>
-                      )}
                     </div>
-                    <div className="flex gap-2 ml-4">
-                      <Button 
-                        variant="outline" 
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleEdit(member)}
                       >
+                        <Edit3 className="h-4 w-4 mr-2" />
                         Modifier
                       </Button>
-                      {member.type === 'commission' && (
-                        <Button 
-                          variant="outline" 
+                      {!['president', 'secretaire', 'tresorier'].includes(member.role) && (
+                        <Button
+                          variant="outline"
                           size="sm"
                           onClick={() => handleDelete(member.id)}
-                          className="text-red-600 hover:text-red-700"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Supprimer
                         </Button>
                       )}
                     </div>
                   </div>
-                </CardContent>
+                </CardHeader>
+                {member.description && (
+                  <CardContent>
+                    <p className="text-muted-foreground">{member.description}</p>
+                  </CardContent>
+                )}
               </Card>
             )}
           </div>
         ))}
       </div>
+
+      {members.length === 0 && (
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-muted-foreground">
+                Aucun membre dans l'organigramme. Ajoutez le premier membre.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
