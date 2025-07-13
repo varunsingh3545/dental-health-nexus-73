@@ -21,7 +21,7 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
     name: member.name || '',
     role: member.role as OrganigramRole,
     imageFile: null as File | null,
-    imageUrl: member.image_url || '',
+    imageUrl: member.image?.url || member.image_url || '',
   });
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,7 +36,7 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setForm({ ...form, imageFile: file, imageUrl: file ? URL.createObjectURL(file) : form.imageUrl });
+    setForm({ ...form, imageFile: file, imageUrl: file ? URL.createObjectURL(file) : (member.image?.url || member.image_url || '') });
   };
 
   const handleSave = async () => {
@@ -46,9 +46,9 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
       // If a new image is selected, upload it
       if (form.imageFile) {
         // Upload to Supabase storage (gallery bucket, path: `${member.id}/${file.name}`)
-        const { data, error } = await OrganigramService.uploadImage(form.imageFile, member.id);
-        if (error) throw error;
-        image_id = data?.id;
+        const result = await OrganigramService.uploadImage(form.imageFile, member.id);
+        if (!result) throw new Error('Failed to upload image');
+        image_id = result.id;
         // Update member image_id
         await OrganigramService.updateMemberImage(member.id, image_id);
       }
@@ -61,21 +61,25 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
       setOpen(false);
       if (onUpdated) onUpdated();
     } catch (err) {
+      console.error('Error saving:', err);
       alert('Erreur lors de la mise à jour');
     } finally {
       setSaving(false);
     }
   };
 
+  // Get the current image URL (handle both old and new data structures)
+  const currentImageUrl = member.image?.url || member.image_url || '';
+
   return (
     <Card className={`h-full transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 ${member.color || 'bg-gradient-to-br from-blue-500 to-blue-600'} text-white overflow-hidden`}>
       <CardHeader className="text-center pb-4 relative">
         <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
         <div className="relative z-10 w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden border-2 border-white/30">
-          {form.imageUrl ? (
+          {currentImageUrl ? (
             <img
-              src={form.imageUrl}
-              alt={form.name}
+              src={currentImageUrl}
+              alt={member.name}
               className="w-full h-full object-cover"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -83,7 +87,7 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
               }}
             />
           ) : null}
-          <Users className={`h-10 w-10 text-white ${form.imageUrl ? 'hidden' : ''}`} />
+          <Users className={`h-10 w-10 text-white ${currentImageUrl ? 'hidden' : ''}`} />
         </div>
         <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mb-2">
           {member.title}

@@ -6,17 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ContactForm } from '@/components/ContactForm';
 import { Heart, Shield, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import doctorHeroImage from '@/assets/doctor-hero.jpg';
-import { supabase } from '@/integrations/supabase/client';
 
-// Test if we can query the table
-supabase.from('gallery_images').select('*').then(result => {
-  console.log('Database test:', result);
-});
-
-// Test if we can access storage
-supabase.storage.from('gallery').list().then(result => {
-  console.log('Storage test:', result);
-});
 const Index = () => {
   const {
     user,
