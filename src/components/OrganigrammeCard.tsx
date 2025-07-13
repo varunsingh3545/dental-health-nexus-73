@@ -71,8 +71,23 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
   // Get the current image URL (handle both old and new data structures)
   const currentImageUrl = member.image?.url || member.image_url || '';
 
+  // Get role-based color for the card
+  const getRoleColor = (role: string) => {
+    const colorMap = {
+      president: 'bg-gradient-to-br from-green-600 to-green-700',
+      vicePresidents: 'bg-gradient-to-br from-blue-600 to-blue-700',
+      secretaire: 'bg-gradient-to-br from-purple-600 to-purple-700',
+      secretaireAdjoint: 'bg-gradient-to-br from-green-500 to-green-600',
+      tresorier: 'bg-gradient-to-br from-blue-500 to-blue-600',
+      tresorierAdjoint: 'bg-gradient-to-br from-purple-500 to-purple-600',
+      chargesMission: 'bg-gradient-to-br from-green-700 to-green-800',
+      verificateur: 'bg-gradient-to-br from-blue-700 to-blue-800'
+    };
+    return colorMap[role as keyof typeof colorMap] || 'bg-gradient-to-br from-purple-500 to-purple-600';
+  };
+
   return (
-    <Card className={`h-full transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 ${member.color || 'bg-gradient-to-br from-blue-500 to-blue-600'} text-white overflow-hidden`}>
+    <Card className={`h-full transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 ${getRoleColor(member.role)} text-white overflow-hidden`}>
       <CardHeader className="text-center pb-4 relative">
         <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
         <div className="relative z-10 w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden border-2 border-white/30">
@@ -89,10 +104,10 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
           ) : null}
           <Users className={`h-10 w-10 text-white ${currentImageUrl ? 'hidden' : ''}`} />
         </div>
-        <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mb-2">
+        <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mb-2 shadow-lg">
           {member.title}
         </Badge>
-        <CardTitle className="text-xl text-white drop-shadow-md font-bold">
+        <CardTitle className="text-xl text-white drop-shadow-lg font-bold">
           {member.name}
         </CardTitle>
         {editable && (
@@ -140,16 +155,16 @@ export function OrganigrammeCard({ member, onUpdated, editable }: OrganigrammeCa
       </CardHeader>
       <CardContent className="text-center relative z-10">
         {member.description && (
-          <p className="text-white/80 text-sm leading-relaxed mb-2">
+          <p className="text-white/95 text-sm leading-relaxed mb-2 drop-shadow-md">
             {member.description}
           </p>
         )}
         {member.members && member.members.length > 0 && (
           <div className="mt-4 pt-4 border-t border-white/20">
-            <h4 className="text-white font-medium text-sm mb-2">Membres:</h4>
+            <h4 className="text-white font-medium text-sm mb-2 drop-shadow-md">Membres:</h4>
             <ul className="space-y-1">
               {member.members.map((memberName: string, index: number) => (
-                <li key={index} className="text-white/80 text-xs">• {memberName}</li>
+                <li key={index} className="text-white/90 text-xs drop-shadow-sm">• {memberName}</li>
               ))}
             </ul>
           </div>

@@ -44,16 +44,16 @@ export default function Organigramme() {
 
   const getRoleColor = (role: string) => {
     const colorMap = {
-      president: 'bg-gradient-to-r from-blue-600 to-blue-700',
-      vicePresidents: 'bg-gradient-to-r from-purple-500 to-purple-600',
-      secretaire: 'bg-gradient-to-r from-blue-500 to-blue-600',
-      secretaireAdjoint: 'bg-gradient-to-r from-cyan-500 to-cyan-600',
-      tresorier: 'bg-gradient-to-r from-teal-500 to-teal-600',
-      tresorierAdjoint: 'bg-gradient-to-r from-green-500 to-green-600',
-      chargesMission: 'bg-gradient-to-r from-red-500 to-red-600',
-      verificateur: 'bg-gradient-to-r from-orange-500 to-orange-600'
+      president: 'bg-gradient-to-br from-green-600 to-green-700',
+      vicePresidents: 'bg-gradient-to-br from-blue-600 to-blue-700',
+      secretaire: 'bg-gradient-to-br from-purple-600 to-purple-700',
+      secretaireAdjoint: 'bg-gradient-to-br from-green-500 to-green-600',
+      tresorier: 'bg-gradient-to-br from-blue-500 to-blue-600',
+      tresorierAdjoint: 'bg-gradient-to-br from-purple-500 to-purple-600',
+      chargesMission: 'bg-gradient-to-br from-green-700 to-green-800',
+      verificateur: 'bg-gradient-to-br from-blue-700 to-blue-800'
     };
-    return colorMap[role as keyof typeof colorMap] || 'bg-gradient-to-r from-blue-500 to-blue-600';
+    return colorMap[role as keyof typeof colorMap] || 'bg-gradient-to-br from-purple-500 to-purple-600';
   };
 
   const MemberCard = ({ member }: { member: OrganigramMember }) => {
@@ -83,23 +83,23 @@ export default function Organigramme() {
           </div>
           
           {/* Role Badge */}
-          <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mb-2">
+          <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mb-2 shadow-lg">
             {getRoleLabel(member.role)}
           </Badge>
           
           {/* Title */}
-          <CardTitle className="text-xl text-white drop-shadow-md font-bold">
+          <CardTitle className="text-xl text-white drop-shadow-lg font-bold">
             {member.title}
           </CardTitle>
         </CardHeader>
         
         <CardContent className="text-center relative z-10">
           {/* Name */}
-          <p className="text-white/95 font-semibold text-lg mb-3">{member.name}</p>
+          <p className="text-white font-semibold text-lg mb-3 drop-shadow-lg">{member.name}</p>
           
           {/* Description */}
           {member.description && (
-            <p className="text-white/80 text-sm leading-relaxed">
+            <p className="text-white/95 text-sm leading-relaxed drop-shadow-md">
               {member.description}
             </p>
           )}
@@ -107,10 +107,10 @@ export default function Organigramme() {
           {/* Members list for commissions */}
           {member.members && member.members.length > 0 && (
             <div className="mt-4 pt-4 border-t border-white/20">
-              <h4 className="text-white font-medium text-sm mb-2">Membres:</h4>
+              <h4 className="text-white font-medium text-sm mb-2 drop-shadow-md">Membres:</h4>
               <ul className="space-y-1">
                 {member.members.map((memberName: string, index: number) => (
-                  <li key={index} className="text-white/80 text-xs">• {memberName}</li>
+                  <li key={index} className="text-white/90 text-xs drop-shadow-sm">• {memberName}</li>
                 ))}
               </ul>
             </div>
