@@ -29,36 +29,17 @@ ALTER TABLE public.organigram_members ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow authenticated users to view organigram members" ON public.organigram_members
     FOR SELECT USING (auth.role() = 'authenticated');
 
--- Allow admin and doctor roles to insert organigram members
-CREATE POLICY "Allow admin and doctor to insert organigram members" ON public.organigram_members
-    FOR INSERT WITH CHECK (
-        auth.uid() = created_by AND 
-        EXISTS (
-            SELECT 1 FROM public.users 
-            WHERE users.id = auth.uid() 
-            AND users.role IN ('admin', 'doctor')
-        )
-    );
+-- Allow any authenticated user to insert organigram members
+CREATE POLICY "Allow authenticated users to insert organigram members" ON public.organigram_members
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
--- Allow admin and doctor roles to update organigram members
-CREATE POLICY "Allow admin and doctor to update organigram members" ON public.organigram_members
-    FOR UPDATE USING (
-        EXISTS (
-            SELECT 1 FROM public.users 
-            WHERE users.id = auth.uid() 
-            AND users.role IN ('admin', 'doctor')
-        )
-    );
+-- Allow any authenticated user to update organigram members
+CREATE POLICY "Allow authenticated users to update organigram members" ON public.organigram_members
+    FOR UPDATE USING (auth.role() = 'authenticated');
 
--- Allow admin and doctor roles to delete organigram members
-CREATE POLICY "Allow admin and doctor to delete organigram members" ON public.organigram_members
-    FOR DELETE USING (
-        EXISTS (
-            SELECT 1 FROM public.users 
-            WHERE users.id = auth.uid() 
-            AND users.role IN ('admin', 'doctor')
-        )
-    );
+-- Allow any authenticated user to delete organigram members
+CREATE POLICY "Allow authenticated users to delete organigram members" ON public.organigram_members
+    FOR DELETE USING (auth.role() = 'authenticated');
 
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_organigram_members_updated_at()
